@@ -46,7 +46,7 @@ DB_PATH_ISSUES = os.path.join(os.getcwd(), "database_files", "issues.db")
 PLAYLIST_DB_PATH = os.path.join(os.getcwd(), "database_files", "playlists.db")
 LOCAL_JSON_PATH = os.path.join(os.getcwd(), "locals", "local.json")
 SERVER_DOMAIN = os.getenv('SANGEET_BACKEND', f'http://127.0.0.1:{os.getenv("PORT")}')
-ADMIN_PASSWORD = "Sk124" # Keep this secure in a real application (e.g., environment variable)
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 
 # Blueprint and external service initialization
