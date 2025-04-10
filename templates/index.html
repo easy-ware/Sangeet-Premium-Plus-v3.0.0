@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="icon" type="image/gif" href="/data/download/icons/sangeet-home" sizes="any">
   <link href="/design/index" rel="stylesheet">
-  <link href="/design/report-issues" rel="stylesheet">
   <style>
     .ripple {
       position: absolute;
@@ -5827,26 +5826,24 @@
 
   </script>
   <script>
-  
-/**
+  /**
  * =========================================================================
- * Issue Reporting System - V3.1 (Complete Implementation)
+ * Issue Reporting System - V3.2 (Corrected & Refactored IDs)
  * -------------------------------------------------------------------------
- * Dynamically creates the modal HTML and links CSS.
- * Provides Report/My Issues tabs, detailed view with conversation.
- * Allows users to report issues and reply to admin comments.
- * Includes polling (5 seconds) for live updates in 'My Issues' and 'Detail' views.
- * Enhanced conversation bubble styling (requires corresponding CSS).
- * Corrected HTML escaping.
+ * - Fixes hover/touch issues by correctly using `display: none`.
+ * - Fixes aria-hidden focus conflict by managing focus on close.
+ * - Refactors all internal IDs with `ic-` prefix to prevent conflicts.
+ * - Links CSS dynamically.
  * =========================================================================
  */
- (function() {
-    // --- Module State ---
-    let modal = null, closeButton = null, reportTabButton = null, myIssuesTabButton = null;
-    let reportModalBody = null, reportFormView = null, myIssuesView = null, issueDetailView = null;
-    let issuesLoading = null, issuesEmpty = null, issuesList = null;
-    let issueDetailTitle = null, issueDetailContent = null, issueStatusBadge = null, issueStatusDate = null, backToIssuesButton = null;
-    let reportTopicInput = null, reportDetailsInput = null, submitIssueButton = null;
+(function() {
+    // --- Module State (Refactored IDs) ---
+    let icModal = null, icCloseButton = null, icReportTabButton = null, icMyIssuesTabButton = null;
+    let icReportModalBody = null, icReportFormView = null, icMyIssuesView = null, icIssueDetailView = null;
+    let icIssuesLoading = null, icIssuesEmpty = null, icIssuesList = null;
+    let icIssueDetailTitle = null, icIssueDetailContent = null, icIssueStatusBadge = null, icIssueStatusDate = null, icBackToIssuesButton = null;
+    let icReportTopicInput = null, icReportDetailsInput = null, icSubmitIssueButton = null;
+    let triggerElement = null; // Store element that opened the modal
 
     let currentView = 'report';
     let issuesLoaded = false;
@@ -5856,120 +5853,133 @@
     let lastIssueListDataHash = null;
     let lastIssueDetailDataHash = null;
     let isModalInitialized = false;
-    const CSS_LINK_ID = 'reportIssueModalStyles';
-    const CSS_PATH = '/design/report-issues'; // Path to your modal CSS
+    const CSS_LINK_ID = 'ic-reportIssueModalStyles'; // Refactored ID
+    const CSS_PATH = '/design/report-issues'; // Path to your modal CSS (adjust if needed)
+    const MODAL_ID = 'ic-reportIssueModal'; // Refactored ID
 
     // --- Initialization ---
     function init() {
         if (isModalInitialized) return;
-        console.log("Initializing Issue Center...");
+        console.log("Initializing Issue Center (v3.2)...");
 
-        createModalStructure(); // Creates base HTML in body
-        updateDOMReferences();  // Finds the created elements by ID
+        createModalStructure();
+        updateDOMReferences();
 
-        if (!modal) {
-             console.error("Issue Reporting Modal root element not found after creation.");
-             return; // Stop if creation failed
+        if (!icModal) {
+             console.error("Issue Center Modal root element not found after creation.");
+             return;
          }
 
-        attachEventListeners(); // Add event handlers to the found elements
-        ensureModalCSSLink(); // Links the external CSS file
-        connectToHamburgerMenu(); // Links the trigger (e.g., menu button)
+        attachEventListeners();
+        ensureModalCSSLink();
+        connectToHamburgerMenu(); // Re-connects trigger after DOM update
 
         isModalInitialized = true;
-        console.log("Issue Center Initialized.");
+        console.log("Issue Center Initialized (v3.2).");
     }
 
-    // --- HTML Structure Creation ---
+    // --- HTML Structure Creation (Refactored IDs) ---
     function createModalStructure() {
-        if (document.getElementById('reportIssueModal')) return;
+        if (document.getElementById(MODAL_ID)) return; // Use constant
 
         const modalContainer = document.createElement('div');
-        modalContainer.id = 'reportIssueModal';
-        modalContainer.className = 'report-issue-modal';
-        modalContainer.setAttribute('aria-hidden', 'true'); // Initially hidden for accessibility
+        modalContainer.id = MODAL_ID; // Use constant
+        modalContainer.className = 'ic-report-issue-modal'; // CSS class can be different
+        modalContainer.style.display = 'none'; // Start hidden correctly
+        modalContainer.setAttribute('aria-hidden', 'true');
         modalContainer.setAttribute('role', 'dialog');
-        modalContainer.setAttribute('aria-labelledby', 'issueCenterModalTitle');
+        modalContainer.setAttribute('aria-modal', 'true'); // Important for modal dialogs
+        modalContainer.setAttribute('aria-labelledby', 'ic-issueCenterModalTitle'); // Refactored
 
         modalContainer.innerHTML = `
-            <div class="report-modal-content" role="document">
-                <div class="report-modal-header">
-                    <h2 id="issueCenterModalTitle">Issue Center</h2>
-                    <button class="report-close-button" id="reportCloseButton" aria-label="Close Issue Center">
+            <div class="ic-report-modal-content" role="document">
+                <div class="ic-report-modal-header">
+                    <h2 id="ic-issueCenterModalTitle">Issue Center</h2>
+                    <button class="ic-report-close-button" id="ic-reportCloseButton" aria-label="Close Issue Center">
                         <span class="material-icons">close</span>
                     </button>
                 </div>
-                <div class="report-tabs" role="tablist">
-                    <button id="reportTabButton" class="report-tab active" data-view="report" role="tab" aria-selected="true" aria-controls="reportFormView">Report Issue</button>
-                    <button id="myIssuesTabButton" class="report-tab" data-view="issues" role="tab" aria-selected="false" aria-controls="myIssuesView">My Issues</button>
+                <div class="ic-report-tabs" role="tablist">
+                    <button id="ic-reportTabButton" class="ic-report-tab active" data-view="report" role="tab" aria-selected="true" aria-controls="ic-reportFormView">Report Issue</button>
+                    <button id="ic-myIssuesTabButton" class="ic-report-tab" data-view="issues" role="tab" aria-selected="false" aria-controls="ic-myIssuesView">My Issues</button>
                 </div>
-                <div class="report-modal-body" id="reportModalBody">
+                <div class="ic-report-modal-body" id="ic-reportModalBody">
                     <!-- Views are added below -->
                 </div>
             </div>`;
         document.body.appendChild(modalContainer);
-        createViews(modalContainer.querySelector('#reportModalBody'));
+        createViews(modalContainer.querySelector('#ic-reportModalBody')); // Refactored ID
     }
 
     function createViews(bodyElement) {
         if (!bodyElement) return;
-        // Use innerHTML for simplicity, ensuring IDs match for updateDOMReferences
+        // Refactored IDs in view containers and controlled elements
         bodyElement.innerHTML = `
              <!-- Report Issue Form View -->
-             <div id="reportFormView" class="report-view active" role="tabpanel" aria-labelledby="reportTabButton">
-                 <div class="report-form-group"><label for="reportTopic">Issue Topic</label><div class="report-input-container"><span class="report-input-icon material-icons">topic</span><input type="text" id="reportTopic" placeholder="Brief description..." autocomplete="off"></div></div>
-                 <div class="report-form-group"><label for="reportDetails">Details</label><div class="report-input-container report-textarea-container"><span class="report-input-icon material-icons">description</span><textarea id="reportDetails" placeholder="Describe the issue..." rows="5"></textarea></div></div>
-                 <div class="report-form-actions"><button id="submitIssueButton" class="report-primary-button"><span class="material-icons">send</span> Submit Issue</button></div>
+             <div id="ic-reportFormView" class="ic-report-view active" role="tabpanel" aria-labelledby="ic-reportTabButton">
+                 <div class="ic-report-form-group"><label for="ic-reportTopic">Issue Topic</label><div class="ic-report-input-container"><span class="ic-report-input-icon material-icons">topic</span><input type="text" id="ic-reportTopic" placeholder="Brief description..." autocomplete="off"></div></div>
+                 <div class="ic-report-form-group"><label for="ic-reportDetails">Details</label><div class="ic-report-input-container ic-report-textarea-container"><span class="ic-report-input-icon material-icons">description</span><textarea id="ic-reportDetails" placeholder="Describe the issue..." rows="5"></textarea></div></div>
+                 <div class="ic-report-form-actions"><button id="ic-submitIssueButton" class="ic-report-primary-button"><span class="material-icons">send</span> Submit Issue</button></div>
              </div>
              <!-- My Issues List View -->
-             <div id="myIssuesView" class="report-view" role="tabpanel" aria-labelledby="myIssuesTabButton">
-                 <div class="issues-loading" id="issuesLoading" style="display: none;"><div class="loading-spinner"></div><p>Loading...</p></div>
-                 <div class="issues-empty" id="issuesEmpty" style="display: none;"><span class="material-icons" style="font-size: 48px;">inbox</span><p>No issues reported yet.</p></div>
-                 <div class="issues-list" id="issuesList" aria-live="polite"></div>
+             <div id="ic-myIssuesView" class="ic-report-view" role="tabpanel" aria-labelledby="ic-myIssuesTabButton">
+                 <div class="ic-issues-loading" id="ic-issuesLoading" style="display: none;"><div class="ic-loading-spinner"></div><p>Loading...</p></div>
+                 <div class="ic-issues-empty" id="ic-issuesEmpty" style="display: none;"><span class="material-icons" style="font-size: 48px;">inbox</span><p>No issues reported yet.</p></div>
+                 <div class="ic-issues-list" id="ic-issuesList" aria-live="polite"></div>
              </div>
              <!-- Issue Detail View -->
-             <div id="issueDetailView" class="report-view">
-                 <div class="issue-detail-header"><button id="backToIssuesButton" class="back-button" aria-label="Back to Issues List"><span class="material-icons">arrow_back</span></button><h3 id="issueDetailTitle">Issue Details</h3></div>
-                 <div class="issue-detail-content" id="issueDetailContent"></div>
-                 <div class="issue-detail-footer"><div class="issue-status" id="issueStatus"><span class="status-badge open" id="issueStatusBadge">Status</span><span class="status-date" id="issueStatusDate">Date</span></div></div>
+             <div id="ic-issueDetailView" class="ic-report-view">
+                 <div class="ic-issue-detail-header"><button id="ic-backToIssuesButton" class="ic-back-button" aria-label="Back to Issues List"><span class="material-icons">arrow_back</span></button><h3 id="ic-issueDetailTitle">Issue Details</h3></div>
+                 <div class="ic-issue-detail-content" id="ic-issueDetailContent"></div>
+                 <div class="ic-issue-detail-footer"><div class="ic-issue-status" id="ic-issueStatus"><span class="ic-status-badge open" id="ic-issueStatusBadge">Status</span><span class="ic-status-date" id="ic-issueStatusDate">Date</span></div></div>
+                  <!-- Reply Section (Dynamically added) -->
              </div>
          `;
     }
 
-    // --- Update DOM References ---
+    // --- Update DOM References (Refactored IDs) ---
     function updateDOMReferences() {
-        modal = document.getElementById('reportIssueModal');
-        if (!modal) return;
-        closeButton = modal.querySelector('#reportCloseButton');
-        reportTabButton = modal.querySelector('#reportTabButton');
-        myIssuesTabButton = modal.querySelector('#myIssuesTabButton');
-        reportModalBody = modal.querySelector('#reportModalBody');
-        reportFormView = modal.querySelector('#reportFormView');
-        myIssuesView = modal.querySelector('#myIssuesView');
-        issueDetailView = modal.querySelector('#issueDetailView');
-        issuesLoading = modal.querySelector('#issuesLoading');
-        issuesEmpty = modal.querySelector('#issuesEmpty');
-        issuesList = modal.querySelector('#issuesList');
-        issueDetailTitle = modal.querySelector('#issueDetailTitle');
-        issueDetailContent = modal.querySelector('#issueDetailContent');
-        issueStatusBadge = modal.querySelector('#issueStatusBadge');
-        issueStatusDate = modal.querySelector('#issueStatusDate');
-        backToIssuesButton = modal.querySelector('#backToIssuesButton');
-        reportTopicInput = modal.querySelector('#reportTopic');
-        reportDetailsInput = modal.querySelector('#reportDetails');
-        submitIssueButton = modal.querySelector('#submitIssueButton');
+        icModal = document.getElementById(MODAL_ID);
+        if (!icModal) return;
+        icCloseButton = icModal.querySelector('#ic-reportCloseButton');
+        icReportTabButton = icModal.querySelector('#ic-reportTabButton');
+        icMyIssuesTabButton = icModal.querySelector('#ic-myIssuesTabButton');
+        icReportModalBody = icModal.querySelector('#ic-reportModalBody');
+        icReportFormView = icModal.querySelector('#ic-reportFormView');
+        icMyIssuesView = icModal.querySelector('#ic-myIssuesView');
+        icIssueDetailView = icModal.querySelector('#ic-issueDetailView');
+        icIssuesLoading = icModal.querySelector('#ic-issuesLoading');
+        icIssuesEmpty = icModal.querySelector('#ic-issuesEmpty');
+        icIssuesList = icModal.querySelector('#ic-issuesList');
+        icIssueDetailTitle = icModal.querySelector('#ic-issueDetailTitle');
+        icIssueDetailContent = icModal.querySelector('#ic-issueDetailContent');
+        icIssueStatusBadge = icModal.querySelector('#ic-issueStatusBadge');
+        icIssueStatusDate = icModal.querySelector('#ic-issueStatusDate');
+        icBackToIssuesButton = icModal.querySelector('#ic-backToIssuesButton');
+        icReportTopicInput = icModal.querySelector('#ic-reportTopic');
+        icReportDetailsInput = icModal.querySelector('#ic-reportDetails');
+        icSubmitIssueButton = icModal.querySelector('#ic-submitIssueButton');
     }
 
     // --- Attach Event Listeners ---
     function attachEventListeners() {
-        if (!modal) return;
-        closeButton?.addEventListener('click', closeModal);
-        reportTabButton?.addEventListener('click', () => switchTab('report'));
-        myIssuesTabButton?.addEventListener('click', () => switchTab('issues'));
-        backToIssuesButton?.addEventListener('click', backToIssuesList);
-        submitIssueButton?.addEventListener('click', submitIssue);
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal?.classList.contains('visible')) closeModal(); });
+        if (!icModal) return;
+        icCloseButton?.addEventListener('click', closeModal);
+        icReportTabButton?.addEventListener('click', () => switchTab('report'));
+        icMyIssuesTabButton?.addEventListener('click', () => switchTab('issues'));
+        icBackToIssuesButton?.addEventListener('click', backToIssuesList);
+        icSubmitIssueButton?.addEventListener('click', submitIssue);
+
+        // Close on background click
+        icModal.addEventListener('click', (e) => {
+            if (e.target === icModal) closeModal();
+        });
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && icModal?.style.display !== 'none') {
+                closeModal();
+            }
+        });
     }
 
      // --- Link CSS ---
@@ -5978,19 +5988,29 @@
         const link = document.createElement('link');
         link.id = CSS_LINK_ID;
         link.rel = 'stylesheet';
-        link.href = CSS_PATH;
+        link.href = CSS_PATH; // Make sure this path is correct
         document.head.appendChild(link);
-        console.log("Linked Issue Modal CSS:", CSS_PATH);
+        console.log("Linked Issue Center CSS:", CSS_PATH);
      }
 
-
-    // --- Core Modal/Tab Functions ---
+    // --- Core Modal/Tab Functions (Corrected open/close logic) ---
     window.openIssueModal = function(tab = 'report') {
         if (!isModalInitialized) init();
-        if (!modal) { console.error('Cannot open Issue Modal.'); return; }
+        if (!icModal) { console.error('Cannot open Issue Center Modal.'); return; }
 
-        modal.classList.add('visible');
-        modal.setAttribute('aria-hidden', 'false');
+        // Store the element that triggered the modal for focus return
+        triggerElement = document.activeElement;
+
+        icModal.style.display = 'flex'; // Make it visible for layout
+        // Use requestAnimationFrame to ensure display is set before adding class for transition
+        requestAnimationFrame(() => {
+            icModal.classList.add('visible');
+            icModal.setAttribute('aria-hidden', 'false');
+
+             // Focus trapping: Focus the first focusable element (e.g., close button)
+             icCloseButton?.focus();
+        });
+
 
         // Set initial tab without transition animation glitch
         const reportView = getViewElement('report');
@@ -6001,51 +6021,93 @@
         reportView?.classList.toggle('active', isReportTab);
         issuesView?.classList.toggle('active', isIssuesTab);
         detailView?.classList.toggle('active', false); // Detail never opens first
-        reportTabButton?.classList.toggle('active', isReportTab);
-        myIssuesTabButton?.classList.toggle('active', isIssuesTab);
-        reportTabButton?.setAttribute('aria-selected', isReportTab);
-        myIssuesTabButton?.setAttribute('aria-selected', isIssuesTab);
+        icReportTabButton?.classList.toggle('active', isReportTab);
+        icMyIssuesTabButton?.classList.toggle('active', isIssuesTab);
+        icReportTabButton?.setAttribute('aria-selected', isReportTab);
+        icMyIssuesTabButton?.setAttribute('aria-selected', isIssuesTab);
         currentView = tab;
 
         if (tab === 'issues') {
             loadUserIssues().finally(() => startIssuePolling('list'));
+        } else if (tab === 'report') {
+            // Maybe focus the topic input when opening the report tab
+            icReportTopicInput?.focus();
         }
-        reportModalBody?.scrollTo(0, 0); // Scroll to top on open
+
+        icReportModalBody?.scrollTo(0, 0); // Scroll to top on open
     };
 
     function closeModal() {
-        if (!modal) return;
-        modal.classList.remove('visible');
-        modal.setAttribute('aria-hidden', 'true');
+        if (!icModal || icModal.style.display === 'none') return; // Already closed
+
         stopIssuePolling();
-        if (reportTopicInput) reportTopicInput.value = '';
-        if (reportDetailsInput) reportDetailsInput.value = '';
-        selectedIssueId = null;
-        // Do not reset issuesLoaded here, preserve cache state
+
+        // 1. Start fade-out animation
+        icModal.classList.remove('visible');
+
+        // 2. Manage focus BEFORE hiding completely
+        if (document.activeElement && icModal.contains(document.activeElement)) {
+            // If focus is inside, try returning to trigger, else blur
+            triggerElement?.focus();
+            if(document.activeElement === triggerElement){
+                 console.log("Focus returned to trigger");
+            } else {
+                (document.activeElement).blur(); // Fallback if trigger isn't focusable
+                console.log("Blurred active element as trigger focus failed");
+            }
+        } else {
+             console.log("Focus was outside modal, not changed.");
+        }
+         triggerElement = null; // Clear trigger reference
+
+
+        // 3. Set aria-hidden and display:none AFTER animation (or use transitionend)
+        // Using setTimeout is simpler here
+        setTimeout(() => {
+             icModal.style.display = 'none';
+             icModal.setAttribute('aria-hidden', 'true');
+
+             // Reset form fields
+            if (icReportTopicInput) icReportTopicInput.value = '';
+            if (icReportDetailsInput) icReportDetailsInput.value = '';
+            selectedIssueId = null;
+            // Do not reset issuesLoaded, preserve cache
+        }, 300); // Match the CSS transition duration
     }
 
     function switchTab(newTab) {
-        if (!modal || newTab === currentView) return;
+        if (!icModal || newTab === currentView) return;
         stopIssuePolling();
 
-        reportTabButton?.classList.toggle('active', newTab === 'report');
-        myIssuesTabButton?.classList.toggle('active', newTab === 'issues');
-        reportTabButton?.setAttribute('aria-selected', newTab === 'report');
-        myIssuesTabButton?.setAttribute('aria-selected', newTab === 'issues');
+        icReportTabButton?.classList.toggle('active', newTab === 'report');
+        icMyIssuesTabButton?.classList.toggle('active', newTab === 'issues');
+        icReportTabButton?.setAttribute('aria-selected', newTab === 'report');
+        icMyIssuesTabButton?.setAttribute('aria-selected', newTab === 'issues');
 
         const oldViewElement = getViewElement(currentView);
         const newViewElement = getViewElement(newTab);
-        const slideDirection = (newTab === 'report' || (currentView === 'detail' && newTab === 'issues')) ? 'right' : 'left';
 
-        if (oldViewElement) animateViewTransition(oldViewElement, `slide-${slideDirection}`, false);
-        if (newViewElement) animateViewTransition(newViewElement, `slide-${slideDirection === 'left' ? 'right' : 'left'}`, true);
+        // --- Simplified View Switching (using active class only) ---
+        // Assuming CSS handles transitions based on the 'active' class
+         if (oldViewElement) oldViewElement.classList.remove('active');
+         if (newViewElement) newViewElement.classList.add('active');
+         // --- End Simplified ---
+
+        // --- OR Keep Slide Animation (Ensure CSS supports it) ---
+        // const slideDirection = (newTab === 'report' || (currentView === 'detail' && newTab === 'issues')) ? 'right' : 'left';
+        // if (oldViewElement) animateViewTransition(oldViewElement, `slide-${slideDirection}`, false);
+        // if (newViewElement) animateViewTransition(newViewElement, `slide-${slideDirection === 'left' ? 'right' : 'left'}`, true);
+        // --- End Slide Animation ---
+
 
         currentView = newTab;
-        reportModalBody?.scrollTo(0, 0); // Scroll to top when switching tabs
+        icReportModalBody?.scrollTo(0, 0); // Scroll to top when switching tabs
 
         if (newTab === 'issues') {
             loadUserIssues(!issuesLoaded).finally(() => {
-                if (modal?.classList.contains('visible') && currentView === 'issues') startIssuePolling('list');
+                if (icModal?.style.display !== 'none' && currentView === 'issues') {
+                    startIssuePolling('list');
+                }
             });
         }
     }
@@ -6053,48 +6115,20 @@
     function getViewElement(viewName) {
         if (!isModalInitialized) return null; // Don't try before init
         switch (viewName) {
-            case 'report': return reportFormView;
-            case 'issues': return myIssuesView;
-            case 'detail': return issueDetailView;
+            case 'report': return icReportFormView;
+            case 'issues': return icMyIssuesView;
+            case 'detail': return icIssueDetailView;
             default: return null;
         }
     }
 
-    function animateViewTransition(element, directionClass, isActivating) {
-         if (!element) return;
-         const activeClass = 'active';
-         element.classList.remove('slide-left', 'slide-right');
-
-         if (isActivating) {
-             element.style.visibility = 'hidden'; // Hide before positioning
-             element.classList.add(directionClass);
-             element.classList.add(activeClass);
-             requestAnimationFrame(() => { // Wait for classes to apply
-                 element.style.visibility = 'visible';
-                 requestAnimationFrame(() => { // Start animation
-                    element.classList.remove(directionClass);
-                 });
-             });
-         } else {
-             element.classList.add(directionClass);
-             const onEnd = () => {
-                 element.classList.remove(activeClass);
-                 element.classList.remove(directionClass);
-                 element.style.visibility = 'hidden'; // Hide completely after animation
-                 element.removeEventListener('transitionend', onEnd);
-            };
-             element.addEventListener('transitionend', onEnd, { once: true });
-             setTimeout(() => { if (element.classList.contains(activeClass)) { onEnd(); } }, 400); // Fallback
-         }
-     }
-
-    // --- Data Fetching and Display ---
+    // --- Data Fetching and Display (Refactored IDs) ---
      async function loadUserIssues(showLoadingIndicator = true) {
          const displaySpinner = showLoadingIndicator && !issuesLoaded;
          if (displaySpinner) {
-             if(issuesLoading) issuesLoading.style.display = 'flex';
-             if(issuesEmpty) issuesEmpty.style.display = 'none';
-             if(issuesList) issuesList.innerHTML = '';
+             if(icIssuesLoading) icIssuesLoading.style.display = 'flex';
+             if(icIssuesEmpty) icIssuesEmpty.style.display = 'none';
+             if(icIssuesList) icIssuesList.innerHTML = '';
          }
         try {
              const response = await fetch('/api/user-issues');
@@ -6102,48 +6136,57 @@
              const data = await response.json();
              issuesLoaded = true;
              const currentHash = generateIssueDataHash(data);
-             if (currentHash !== lastIssueListDataHash || displaySpinner) { displayIssues(data); lastIssueListDataHash = currentHash; }
+             // Only update DOM if hash changed or it was the initial load with spinner
+             if (currentHash !== lastIssueListDataHash || displaySpinner) {
+                displayIssues(data);
+                lastIssueListDataHash = currentHash;
+             }
              return data;
          } catch (error) {
              console.error('Error loading issues:', error);
              if (displaySpinner) displayError();
              lastIssueListDataHash = null;
-             throw error; // Re-throw for .finally if needed
+             throw error;
          } finally {
-             if (displaySpinner && issuesLoading) issuesLoading.style.display = 'none';
+             // Always hide spinner if it was shown
+             if (displaySpinner && icIssuesLoading) icIssuesLoading.style.display = 'none';
          }
      }
 
     function displayIssues(issues) {
-        if (!issuesList || !issuesEmpty) return;
-        issuesList.innerHTML = '';
+        if (!icIssuesList || !icIssuesEmpty) return;
+        icIssuesList.innerHTML = ''; // Clear previous
 
         if (!issues || issues.length === 0) {
-             issuesEmpty.style.display = 'flex';
-             issuesEmpty.innerHTML = `<span class="material-icons" style="font-size: 48px; margin-bottom: 10px;">inbox</span><p>No issues reported yet.</p>`;
+             icIssuesEmpty.style.display = 'flex'; // Show empty state
+             // Ensure content is set if it wasn't already
+             if (!icIssuesEmpty.innerHTML.includes('inbox')) {
+                 icIssuesEmpty.innerHTML = `<span class="material-icons" style="font-size: 48px; margin-bottom: 10px;">inbox</span><p>No issues reported yet.</p>`;
+             }
              return;
         }
-        issuesEmpty.style.display = 'none';
+        icIssuesEmpty.style.display = 'none'; // Hide empty state
         issues.sort((a, b) => new Date(b.updated_at) - new Date(a.created_at)); // Sort by most recently updated
 
         issues.forEach(issue => {
              const issueItem = document.createElement('button'); // Use button for accessibility
-             issueItem.className = 'issue-item';
+             issueItem.className = 'ic-issue-item'; // Refactored class
              issueItem.dataset.issueId = issue.id;
              issueItem.setAttribute('role', 'button');
              issueItem.setAttribute('aria-label', `View details for issue: ${issue.topic}`);
              const statusClass = issue.status.toLowerCase().replace(/\s+/g, '-');
-             const hasUnread = issue.comments?.length > 0 && issue.comments[issue.comments.length - 1].is_admin; // Simplified unread check
+             // Check if latest comment is admin AND different from last known user comment timestamp (more robust unread)
+             const hasUnread = issue.comments?.length > 0 && issue.comments[issue.comments.length - 1].is_admin;
 
              issueItem.innerHTML = `
-                 <div class="issue-title ${hasUnread ? 'unread' : ''}">${escapeHtml(issue.topic)} ${hasUnread ? '<span class="unread-indicator">•</span>':''}</div>
-                 <div class="issue-meta">
-                     <span class="issue-date">Updated: ${formatDate(issue.updated_at, true)}</span>
-                     <span class="issue-status-badge ${statusClass}">${escapeHtml(issue.status)}</span>
+                 <div class="ic-issue-title ${hasUnread ? 'unread' : ''}">${escapeHtml(issue.topic)} ${hasUnread ? '<span class="ic-unread-indicator">•</span>':''}</div>
+                 <div class="ic-issue-meta">
+                     <span class="ic-issue-date">Updated: ${formatDate(issue.updated_at, true)}</span>
+                     <span class="ic-issue-status-badge ${statusClass}">${escapeHtml(issue.status)}</span>
                  </div>
             `;
              issueItem.addEventListener('click', () => viewIssueDetail(issue));
-            issuesList.appendChild(issueItem);
+            icIssuesList.appendChild(issueItem);
         });
     }
 
@@ -6152,16 +6195,16 @@
         stopIssuePolling();
         selectedIssueId = issue.id;
 
-        if (issueDetailTitle) issueDetailTitle.textContent = escapeHtml(issue.topic);
-        if (!issueDetailContent) return;
-        issueDetailContent.innerHTML = ''; // Clear previous
+        if (icIssueDetailTitle) icIssueDetailTitle.textContent = escapeHtml(issue.topic);
+        if (!icIssueDetailContent) return;
+        icIssueDetailContent.innerHTML = ''; // Clear previous
 
-        const fragment = document.createDocumentFragment(); // Use fragment for performance
+        const fragment = document.createDocumentFragment();
 
         // --- Original Description ---
         const descriptionBubble = document.createElement('div');
-        descriptionBubble.className = 'conversation-bubble user-bubble';
-        descriptionBubble.innerHTML = `<div class="bubble-header"><span class="bubble-author">You (Reported)</span><span class="bubble-date">${formatDate(issue.created_at, true)}</span></div><div class="bubble-content">${escapeHtml(issue.details || '')}</div>`;
+        descriptionBubble.className = 'ic-conversation-bubble ic-user-bubble'; // Refactored classes
+        descriptionBubble.innerHTML = `<div class="ic-bubble-header"><span class="ic-bubble-author">You (Reported)</span><span class="ic-bubble-date">${formatDate(issue.created_at, true)}</span></div><div class="ic-bubble-content">${escapeHtml(issue.details || '')}</div>`;
         fragment.appendChild(descriptionBubble);
 
         // --- Discussion Section ---
@@ -6170,15 +6213,15 @@
             issue.comments.forEach(comment => {
                  const isAdmin = comment.is_admin;
                  const authorLabel = isAdmin ? 'Sangeet Admin' : 'You';
-                 const bubbleClass = isAdmin ? 'admin-bubble' : 'user-bubble';
+                 const bubbleClass = isAdmin ? 'ic-admin-bubble' : 'ic-user-bubble'; // Refactored classes
                  const commentBubble = document.createElement('div');
-                 commentBubble.className = `conversation-bubble ${bubbleClass}`;
-                 commentBubble.innerHTML = `<div class="bubble-header"><span class="bubble-author">${escapeHtml(authorLabel)}</span><span class="bubble-date">${formatDate(comment.created_at, true)}</span></div><div class="bubble-content">${escapeHtml(comment.content)}</div>`;
+                 commentBubble.className = `ic-conversation-bubble ${bubbleClass}`; // Refactored classes
+                 commentBubble.innerHTML = `<div class="ic-bubble-header"><span class="ic-bubble-author">${escapeHtml(authorLabel)}</span><span class="ic-bubble-date">${formatDate(comment.created_at, true)}</span></div><div class="ic-bubble-content">${escapeHtml(comment.content)}</div>`;
                  fragment.appendChild(commentBubble);
             });
         } else {
              const noResponseP = document.createElement('p');
-             noResponseP.className = 'no-responses';
+             noResponseP.className = 'ic-no-responses'; // Refactored class
              noResponseP.textContent = 'No further discussion yet.';
              fragment.appendChild(noResponseP);
         }
@@ -6186,88 +6229,104 @@
          // --- Reply Section (Conditional) ---
          if (issue.status !== 'Closed') {
             const replySection = document.createElement('div');
-            replySection.className = 'user-reply-section';
-            replySection.innerHTML = `<div class="report-input-container report-textarea-container"><textarea id="userReplyTextarea" placeholder="Type your reply..." rows="3" aria-label="Your reply"></textarea></div><div class="reply-actions"><button id="submitUserReplyButton" class="report-primary-button"><span class="material-icons">send</span> Send</button></div><div id="userReplyError" class="reply-error" aria-live="polite"></div>`;
+            replySection.className = 'ic-user-reply-section'; // Refactored class
+            // Refactored IDs for reply elements
+            replySection.innerHTML = `
+                <div class="ic-report-input-container ic-report-textarea-container">
+                    <textarea id="ic-userReplyTextarea" placeholder="Type your reply..." rows="3" aria-label="Your reply"></textarea>
+                </div>
+                <div class="ic-reply-actions">
+                    <button id="ic-submitUserReplyButton" class="ic-report-primary-button">
+                        <span class="material-icons">send</span> Send
+                    </button>
+                </div>
+                <div id="ic-userReplyError" class="ic-reply-error" aria-live="polite"></div>`;
             fragment.appendChild(replySection);
-             // Attach listener after appending fragment
          } else {
              const closedNotice = document.createElement('div');
-             closedNotice.className = 'user-reply-section issue-closed-notice';
+             closedNotice.className = 'ic-user-reply-section ic-issue-closed-notice'; // Refactored classes
              closedNotice.innerHTML = `<p><span class="material-icons">lock</span> Issue Closed. Replies disabled.</p>`;
              fragment.appendChild(closedNotice);
          }
 
-        // Append fragment and attach listener
-        issueDetailContent.appendChild(fragment);
-         const submitReplyBtn = issueDetailContent.querySelector('#submitUserReplyButton');
+        // Append fragment and attach listener AFTER appending
+        icIssueDetailContent.appendChild(fragment);
+         const submitReplyBtn = icIssueDetailContent.querySelector('#ic-submitUserReplyButton'); // Refactored ID
          submitReplyBtn?.addEventListener('click', submitUserReply);
 
-        // --- Update Status Footer ---
-        if (issueStatusBadge) { issueStatusBadge.textContent = issue.status; issueStatusBadge.className = `status-badge ${issue.status.toLowerCase().replace(/\s+/g, '-')}`; }
-        if (issueStatusDate) issueStatusDate.textContent = `Updated: ${formatDate(issue.updated_at, true)}`;
+        // --- Update Status Footer (Refactored IDs) ---
+        if (icIssueStatusBadge) { icIssueStatusBadge.textContent = issue.status; icIssueStatusBadge.className = `ic-status-badge ${issue.status.toLowerCase().replace(/\s+/g, '-')}`; }
+        if (icIssueStatusDate) icIssueStatusDate.textContent = `Updated: ${formatDate(issue.updated_at, true)}`;
 
         // --- Switch View & Start Polling ---
-        animateViewTransition(myIssuesView, 'slide-left', false);
-        animateViewTransition(issueDetailView, 'slide-right', true);
+        // Switch using classes directly is simpler
+        if (icMyIssuesView) icMyIssuesView.classList.remove('active');
+        if (icIssueDetailView) icIssueDetailView.classList.add('active');
         currentView = 'detail';
         lastIssueDetailDataHash = generateSingleIssueDataHash(issue);
-        reportModalBody?.scrollTo({ top: reportModalBody.scrollHeight, behavior: 'smooth' }); // Scroll to bottom
+        icReportModalBody?.scrollTo({ top: icReportModalBody.scrollHeight, behavior: 'smooth' }); // Scroll to bottom
         startIssuePolling('detail');
     }
 
     function backToIssuesList() {
         if (!isModalInitialized) return;
         stopIssuePolling();
-        if (issueDetailView) animateViewTransition(issueDetailView, 'slide-right', false);
-        if (myIssuesView) animateViewTransition(myIssuesView, 'slide-left', true);
+
+        if (icIssueDetailView) icIssueDetailView.classList.remove('active');
+        if (icMyIssuesView) icMyIssuesView.classList.add('active');
+
         currentView = 'issues';
         selectedIssueId = null;
         lastIssueDetailDataHash = null;
-        reportModalBody?.scrollTo(0, 0); // Scroll list to top
+        icReportModalBody?.scrollTo(0, 0); // Scroll list to top
         // Refresh list and start polling
         loadUserIssues(false).finally(() => {
-            if (modal?.classList.contains('visible') && currentView === 'issues') startIssuePolling('list');
+            if (icModal?.style.display !== 'none' && currentView === 'issues') {
+                startIssuePolling('list');
+            }
         });
     }
 
     function displayError() {
-        if (issuesEmpty) {
-             issuesEmpty.style.display = 'flex';
-             issuesEmpty.innerHTML = `<span class="material-icons" style="font-size: 48px;">error_outline</span><p>Failed to load issues.</p>`;
+        if (icIssuesEmpty) {
+             icIssuesEmpty.style.display = 'flex';
+             icIssuesEmpty.innerHTML = `<span class="material-icons" style="font-size: 48px;">error_outline</span><p>Failed to load issues.</p>`;
         }
-        if (issuesList) issuesList.innerHTML = ''; // Clear any potential stale items
+        if (icIssuesList) icIssuesList.innerHTML = ''; // Clear any potential stale items
     }
 
 
-    // --- Action Functions ---
+    // --- Action Functions (Refactored IDs) ---
     function submitIssue() {
-        if (!reportTopicInput || !reportDetailsInput || !submitIssueButton) return;
-        const topic = reportTopicInput.value.trim();
-        const details = reportDetailsInput.value.trim();
+        if (!icReportTopicInput || !icReportDetailsInput || !icSubmitIssueButton) return;
+        const topic = icReportTopicInput.value.trim();
+        const details = icReportDetailsInput.value.trim();
         if (!topic || !details) { showToast('Topic and details required.', 'error'); return; }
 
-        submitIssueButton.disabled = true; submitIssueButton.innerHTML = 'Submitting...';
+        icSubmitIssueButton.disabled = true; icSubmitIssueButton.innerHTML = 'Submitting...';
 
         fetch('/api/report-issue', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ topic, details }) })
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(() => {
-            reportTopicInput.value = ''; reportDetailsInput.value = '';
+            icReportTopicInput.value = ''; icReportDetailsInput.value = '';
             showToast('Issue submitted!', 'success');
-            issuesLoaded = false; switchTab('issues');
+            issuesLoaded = false; // Force reload
+            switchTab('issues');
         })
         .catch(e => showToast(e.error || 'Failed to submit.', 'error'))
-        .finally(() => { submitIssueButton.disabled = false; submitIssueButton.innerHTML = '<span class="material-icons">send</span> Submit'; });
+        .finally(() => { icSubmitIssueButton.disabled = false; icSubmitIssueButton.innerHTML = '<span class="material-icons">send</span> Submit'; });
     }
 
     function submitUserReply() {
          if (!selectedIssueId || !isModalInitialized) return;
-         const textarea = modal.querySelector('#userReplyTextarea');
-         const button = modal.querySelector('#submitUserReplyButton');
-         const errorDiv = modal.querySelector('#userReplyError');
+         // Use refactored IDs to find elements
+         const textarea = icModal?.querySelector('#ic-userReplyTextarea');
+         const button = icModal?.querySelector('#ic-submitUserReplyButton');
+         const errorDiv = icModal?.querySelector('#ic-userReplyError');
          const comment = textarea?.value.trim();
 
          if (!textarea || !button) { console.error("Reply elements not found in submitUserReply"); return; }
-         if (errorDiv) errorDiv.textContent = '';
+         if (errorDiv) errorDiv.textContent = ''; // Clear previous errors
          if (!comment) { if(errorDiv) errorDiv.textContent = 'Reply cannot be empty.'; textarea.focus(); return; }
 
          button.disabled = true; button.innerHTML = 'Sending...';
@@ -6275,78 +6334,153 @@
          fetch(`/api/issues/${selectedIssueId}/reply`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ comment }) })
              .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
              .then(({ ok, data }) => {
-                 if (!ok) throw new Error(data.error || 'Failed');
-                 textarea.value = ''; showToast('Reply sent!', 'success');
+                 if (!ok) throw new Error(data.error || 'Failed to send reply');
+                 textarea.value = ''; // Clear textarea on success
+                 showToast('Reply sent!', 'success');
                  stopIssuePolling(); // Pause polling for manual refresh
-                 return fetch('/api/user-issues'); // Re-fetch all issues to get the latest state
+                 return fetch('/api/user-issues'); // Re-fetch all issues
             })
              .then(res => res.ok ? res.json() : Promise.reject('Refetch failed'))
              .then(issues => {
                  const updatedIssue = issues.find(iss => iss.id == selectedIssueId);
                  if (updatedIssue && currentView === 'detail') {
-                     viewIssueDetail(updatedIssue); // This restarts polling
-                 } else { backToIssuesList(); }
+                    // Re-render the detail view with new data, which restarts polling
+                    viewIssueDetail(updatedIssue);
+                 } else {
+                    // If not in detail view or issue not found, go back to list
+                    backToIssuesList();
+                 }
              })
              .catch(error => {
                  console.error('Error sending/refreshing reply:', error);
-                if (errorDiv) errorDiv.textContent = error.message === 'Failed refetch' ? 'Could not refresh view.' : (error.message || 'Send failed.');
+                 if (errorDiv) errorDiv.textContent = error.message === 'Refetch failed' ? 'Could not refresh view.' : (error.message || 'Send failed.');
                  showToast('Failed to send reply.', 'error');
-                 if (currentView === 'detail' && !issuePollingIntervalId) startIssuePolling('detail'); // Resume polling if error occurred
+                 // Resume polling only if still in detail view and polling isn't running
+                 if (currentView === 'detail' && !issuePollingIntervalId) startIssuePolling('detail');
              })
              .finally(() => {
+                 // Ensure button is re-enabled
                  if(button) { button.disabled = false; button.innerHTML = '<span class="material-icons">send</span> Send'; }
              });
     }
 
 
     // --- Polling Functions ---
+    // Hash functions remain the same, they operate on data structure, not IDs
      function generateIssueDataHash(issues) { if (!issues || !Array.isArray(issues)) return ''; try { return JSON.stringify(issues.map(iss => ({ i:iss.id, s:iss.status, u:iss.updated_at, cc:(iss.comments || []).length }))); } catch (e) { return `${Date.now()}`; } }
      function generateSingleIssueDataHash(issue) { if (!issue) return ''; try { const lc = issue.comments?.slice(-1)[0]?.created_at ?? ''; return JSON.stringify({ i:issue.id, s:issue.status, u:issue.updated_at, cc:(issue.comments || []).length, lc:lc }); } catch (e) { return `${Date.now()}`; } }
 
      function startIssuePolling(viewType) {
-        stopIssuePolling();
+        stopIssuePolling(); // Ensure no duplicates
          const pollFunction = async () => {
-            if (!modal?.classList.contains('visible') || currentView !== viewType || !navigator.onLine) { stopIssuePolling(); return; }
+            // Check if modal is still visible and on the correct view
+            if (icModal?.style.display === 'none' || currentView !== viewType || !navigator.onLine) {
+                stopIssuePolling();
+                return;
+            }
             try {
-                const r = await fetch('/api/user-issues'); if (!r.ok) return; const d = await r.json();
-                 if (viewType === 'list') { const h=generateIssueDataHash(d); if(h !== lastIssueListDataHash){ lastIssueListDataHash=h; if(currentView === 'issues') displayIssues(d);}}
-                else if (viewType === 'detail' && selectedIssueId) { const i=d.find(x=>x.id==selectedIssueId); if(i){const h=generateSingleIssueDataHash(i); if(h!==lastIssueDetailDataHash){lastIssueDetailDataHash=h; if(currentView==='detail') viewIssueDetail(i);}} else {showToast('Issue may have been closed or removed.','warning'); backToIssuesList();}}
-            } catch(e) { console.error("Polling error:", e); } // Avoid stopping poll on temporary network errors
+                const r = await fetch('/api/user-issues');
+                if (!r.ok) { console.warn('Polling fetch failed:', r.status); return; } // Don't stop polling on server error
+                const d = await r.json();
+
+                 if (viewType === 'list') {
+                    const h=generateIssueDataHash(d);
+                    if(h !== lastIssueListDataHash){
+                        lastIssueListDataHash=h;
+                        if(currentView === 'issues') displayIssues(d); // Update list view
+                        console.log("Issue list updated via polling.");
+                    }
+                 } else if (viewType === 'detail' && selectedIssueId) {
+                    const i=d.find(x=>x.id == selectedIssueId);
+                    if(i){
+                        const h=generateSingleIssueDataHash(i);
+                        if(h!==lastIssueDetailDataHash){
+                            lastIssueDetailDataHash=h;
+                            if(currentView==='detail') viewIssueDetail(i); // Update detail view
+                            console.log("Issue detail updated via polling.");
+                        }
+                    } else {
+                        // Issue disappeared (e.g., deleted by admin)
+                        showToast('Issue may have been removed or closed.','warning');
+                        backToIssuesList(); // Go back to list, stop polling for detail
+                    }
+                 }
+            } catch(e) {
+                console.error("Polling error:", e); // Log network errors but don't stop
+            }
          };
+
+         // Run immediately only if the modal is actually visible
+         if (icModal?.style.display !== 'none') {
+             pollFunction();
+         }
          issuePollingIntervalId = setInterval(pollFunction, POLLING_INTERVAL_MS);
-         console.log(`Polling started (${viewType}, ${issuePollingIntervalId})`);
-        pollFunction(); // Run once immediately if modal is visible
+         console.log(`Polling started (${viewType}, Interval ID: ${issuePollingIntervalId})`);
      }
 
     function stopIssuePolling() {
-        if (issuePollingIntervalId !== null) { clearInterval(issuePollingIntervalId); console.log(`Polling stopped (${issuePollingIntervalId})`); issuePollingIntervalId = null; }
+        if (issuePollingIntervalId !== null) {
+            clearInterval(issuePollingIntervalId);
+            console.log(`Polling stopped (Interval ID: ${issuePollingIntervalId})`);
+            issuePollingIntervalId = null;
+        }
     }
 
     // --- Utility Functions ---
     function escapeHtml(unsafe) {
         if (typeof unsafe !== 'string') return unsafe ?? '';
         return unsafe
-             .replace(/&/g, "&")
+             .replace(/&/g, "&") // Use & for ampersand
              .replace(/</g, "<")
              .replace(/>/g, ">")
              .replace(/"/g, '"')
-             .replace(/'/g, "'"); // Correctly escape single quotes
+             .replace(/'/g, "'"); // Use HTML entity for single quote
     }
     function formatDate(dateString, includeTime = false) {
          if (!dateString) return '';
-         try { const d = new Date(dateString); const opts = { year: 'numeric', month: 'short', day: 'numeric' }; if(includeTime) {opts.hour='numeric'; opts.minute='2-digit'; opts.hour12=true;} return d.toLocaleString('en-US', opts); } catch(e){ return 'Invalid Date'; }
+         try {
+             const d = new Date(dateString);
+             const opts = { year: 'numeric', month: 'short', day: 'numeric' };
+             if(includeTime) {
+                 opts.hour='numeric';
+                 opts.minute='2-digit';
+                 opts.hour12=true;
+            }
+            // Use local timezone formatting which is generally preferred
+            return d.toLocaleString(undefined, opts); // 'en-US' or let browser decide
+         } catch(e){
+            console.warn("Invalid date format:", dateString, e);
+            return 'Invalid Date';
+         }
      }
     function showToast(message, type = 'info') {
-        if (typeof window.showNotification === 'function') window.showNotification(type, 'Issue Center', message);
-        else console.log(`[Toast-${type}]: ${message}`);
+        // Assumes a global showNotification function exists
+        if (typeof window.showNotification === 'function') {
+            window.showNotification(type, 'Issue Center', message);
+        } else {
+            console.log(`[Issue Center Toast-${type}]: ${message}`);
+        }
      }
      function connectToHamburgerMenu() {
-        const trigger = document.querySelector('[data-action="report-issue"], .report-issue-trigger');
-        if (trigger) {
-            const newTrigger = trigger.cloneNode(true);
-            trigger.parentNode?.replaceChild(newTrigger, trigger);
-            newTrigger.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); window.openIssueModal('report'); });
-        } else { console.warn("Report Issue trigger not found."); }
+        // Use a more specific selector if possible, or keep the generic one
+        const triggerSelector = '[data-action="report-issue"], .report-issue-trigger';
+        let currentTrigger = document.querySelector(triggerSelector);
+
+        if (currentTrigger) {
+            // Remove old listener if reconnecting (important if init runs multiple times)
+            const newTrigger = currentTrigger.cloneNode(true);
+            currentTrigger.parentNode?.replaceChild(newTrigger, currentTrigger);
+            currentTrigger = newTrigger; // Update reference
+
+            currentTrigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.openIssueModal('report'); // Use the global function
+            });
+            console.log("Issue Center trigger connected.");
+        } else {
+            console.warn("Issue Center trigger not found (selector: '" + triggerSelector + "'). Modal must be opened programmatically via openIssueModal().");
+        }
     }
 
     // --- Auto-initialize ---
