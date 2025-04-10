@@ -1,0 +1,565 @@
+/* ==========================================================================
+   Report Issue Modal
+   ========================================================================== */
+
+   #reportIssueModal.report-issue-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 12, 18, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    backdrop-filter: blur(8px);
+    padding: 20px;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal.report-issue-modal {
+        background-color: rgba(0, 0, 0, 0.65);
+    }
+}
+
+#reportIssueModal.report-issue-modal.visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0s linear 0s;
+    animation: reportModalFadeIn 0.3s forwards;
+}
+
+#reportIssueModal .report-modal-content {
+    width: 100%;
+    max-width: 550px;
+    background-color: #14151f;
+    color: #e1e5ee;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+    animation: reportModalSlideIn 0.4s forwards ease-out;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-modal-content {
+        background-color: #ffffff;
+        color: #343a40;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+}
+
+#reportIssueModal .report-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-modal-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+}
+
+#reportIssueModal .report-modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+#reportIssueModal .report-close-button {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+#reportIssueModal .report-close-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e1e5ee;
+}
+
+/* Tab Navigation Styles */
+#reportIssueModal .report-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2px;
+    border-radius: 8px;
+    margin: 15px 28px 0;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-tabs {
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+}
+
+#reportIssueModal .report-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-tab {
+        color: #64748b;
+    }
+}
+
+#reportIssueModal .report-tab.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #3a4b8c, #4d5d8c);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-tab.active {
+        background: linear-gradient(135deg, #5a77d8, #7765d4);
+        color: #ffffff;
+    }
+}
+
+#reportIssueModal .report-tab::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: 0.5s;
+}
+
+#reportIssueModal .report-tab:hover::after {
+    left: 100%;
+}
+
+/* View Transitions */
+#reportIssueModal .report-modal-body {
+    padding: 25px 28px 30px;
+    overflow-y: auto;
+    flex: 1;
+    position: relative;
+}
+
+#reportIssueModal .report-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 25px 28px 30px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+}
+
+#reportIssueModal .report-view.active {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0s;
+}
+
+#reportIssueModal .report-view.slide-left {
+    transform: translateX(-20px);
+}
+
+#reportIssueModal .report-view.slide-right {
+    transform: translateX(20px);
+}
+
+/* Form Elements */
+#reportIssueModal .report-form-group {
+    margin-bottom: 20px;
+}
+
+#reportIssueModal .report-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #94a3b8;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-form-group label {
+        color: #64748b;
+    }
+}
+
+#reportIssueModal .report-input-container {
+    position: relative;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-input-container {
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+}
+
+#reportIssueModal .report-input-container:focus-within {
+    border-color: #4d5d8c;
+    box-shadow: 0 0 0 2px rgba(77, 93, 140, 0.2);
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-input-container:focus-within {
+        border-color: #7765d4;
+        box-shadow: 0 0 0 2px rgba(119, 101, 212, 0.2);
+    }
+}
+
+#reportIssueModal .report-input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 20px;
+}
+
+#reportIssueModal .report-textarea-container .report-input-icon {
+    top: 16px;
+    transform: none;
+}
+
+#reportIssueModal input,
+#reportIssueModal textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 12px 12px 12px 44px;
+    font-size: 15px;
+    color: #e1e5ee;
+    outline: none;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal input,
+    #reportIssueModal textarea {
+        color: #343a40;
+    }
+}
+
+#reportIssueModal textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+#reportIssueModal ::placeholder {
+    color: #6b7280;
+    opacity: 0.7;
+}
+
+/* Form Actions */
+#reportIssueModal .report-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
+
+#reportIssueModal .report-primary-button {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #3a4b8c, #4d5d8c);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(77, 93, 140, 0.2);
+    transition: all 0.2s ease;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-primary-button {
+        background: linear-gradient(135deg, #5a77d8, #7765d4);
+    }
+}
+
+#reportIssueModal .report-primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(77, 93, 140, 0.3);
+}
+
+#reportIssueModal .report-primary-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(77, 93, 140, 0.2);
+}
+
+#reportIssueModal .report-primary-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #2a3150;
+    box-shadow: none;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .report-primary-button:disabled {
+        background: #c5cde8;
+    }
+}
+
+#reportIssueModal .report-primary-button .material-icons {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* Issues List Styles */
+#reportIssueModal .issues-loading,
+#reportIssueModal .issues-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    color: #94a3b8;
+    text-align: center;
+}
+
+#reportIssueModal .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: #4d5d8c;
+    animation: spinner 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spinner {
+    to { transform: rotate(360deg); }
+}
+
+#reportIssueModal .issues-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#reportIssueModal .issue-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .issue-item {
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+}
+
+#reportIssueModal .issue-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .issue-item:hover {
+        background: rgba(0, 0, 0, 0.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+}
+
+#reportIssueModal .issue-title {
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #e1e5ee;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .issue-title {
+        color: #343a40;
+    }
+}
+
+#reportIssueModal .issue-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .issue-meta {
+        color: #64748b;
+    }
+}
+
+#reportIssueModal .issue-status-badge {
+    padding: 4px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+#reportIssueModal .issue-status-badge.open {
+    background: rgba(79, 70, 229, 0.1);
+    color: #818cf8;
+}
+
+#reportIssueModal .issue-status-badge.in-progress {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+#reportIssueModal .issue-status-badge.resolved {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+/* Issue Detail View Styles */
+#reportIssueModal .issue-detail-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#reportIssueModal .back-button {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 15px;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .back-button {
+        background: rgba(0, 0, 0, 0.05);
+    }
+}
+
+#reportIssueModal .back-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #e1e5ee;
+    transform: translateX(-2px);
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .back-button:hover {
+        background: rgba(0, 0, 0, 0.1);
+        color: #343a40;
+    }
+}
+
+#reportIssueModal .issue-detail-content {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: #cbd5e1;
+}
+
+@media (prefers-color-scheme: light) {
+    #reportIssueModal .issue-detail-content {
+        background: rgba(0, 0, 0, 0.03);
+        color: #4b5563;
+    }
+}
+
+#reportIssueModal .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-right: 10px;
+}
+
+/* Animation Keyframes */
+@keyframes reportModalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes reportModalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    #reportIssueModal .report-modal-content {
+        max-width: calc(100% - 20px);
+        margin: 10px;
+        max-height: calc(100vh - 20px);
+    }
+
+    #reportIssueModal .report-modal-header {
+        padding: 18px 20px;
+    }
+
+    #reportIssueModal .report-modal-body {
+        padding: 22px;
+    }
+
+    #reportIssueModal .report-form-actions {
+        justify-content: stretch;
+    }
+
+    #reportIssueModal .report-primary-button {
+        width: 100%;
+    }
+}
