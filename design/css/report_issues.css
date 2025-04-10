@@ -1,39 +1,38 @@
 /* ==========================================================================
-   Report Issue Modal
+   Issue Center Modal (Refactored IDs & Display Fix)
    ========================================================================== */
 
-   #reportIssueModal.report-issue-modal {
+/* --- Base Modal Container --- */
+#ic-reportIssueModal { /* Refactored ID */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(10, 12, 18, 0.85);
-    display: flex;
+    display: none; /* Hide by default using display */
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 1050; /* Ensure it's above other elements */
     opacity: 0;
-    visibility: hidden;
+    visibility: hidden; /* Keep for transition */
     transition: opacity 0.3s ease, visibility 0s linear 0.3s;
     backdrop-filter: blur(8px);
     padding: 20px;
+    overflow: hidden; /* Prevent body scroll when modal is open */
 }
 
-@media (prefers-color-scheme: light) {
-    #reportIssueModal.report-issue-modal {
-        background-color: rgba(0, 0, 0, 0.65);
-    }
-}
-
-#reportIssueModal.report-issue-modal.visible {
+/* --- Visible State --- */
+#ic-reportIssueModal.visible {
+    display: flex; /* Show using display */
     opacity: 1;
     visibility: visible;
     transition: opacity 0.3s ease, visibility 0s linear 0s;
-    animation: reportModalFadeIn 0.3s forwards;
+    animation: ic-reportModalFadeIn 0.3s forwards; /* Refactored animation name */
 }
 
-#reportIssueModal .report-modal-content {
+/* --- Modal Content Box --- */
+#ic-reportIssueModal .ic-report-modal-content { /* Refactored class */
     width: 100%;
     max-width: 550px;
     background-color: #14151f;
@@ -43,48 +42,36 @@
     overflow: hidden;
     transform: scale(0.95);
     transition: transform 0.3s ease;
-    animation: reportModalSlideIn 0.4s forwards ease-out;
+    animation: ic-reportModalSlideIn 0.4s forwards ease-out; /* Refactored animation name */
     border: 1px solid rgba(255, 255, 255, 0.05);
-    max-height: 90vh;
+    max-height: 90vh; /* Limit height */
     display: flex;
     flex-direction: column;
 }
 
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-modal-content {
-        background-color: #ffffff;
-        color: #343a40;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        border: 1px solid rgba(0, 0, 0, 0.06);
-    }
-}
-
-#reportIssueModal .report-modal-header {
+/* --- Header --- */
+#ic-reportIssueModal .ic-report-modal-header { /* Refactored class */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 28px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-modal-header {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    }
-}
-
-#reportIssueModal .report-modal-header h2 {
+#ic-reportIssueModal .ic-report-modal-header h2 { /* Target specific h2 */
     font-size: 20px;
     font-weight: 600;
     margin: 0;
+    color: #e1e5ee; /* Explicit color */
 }
 
-#reportIssueModal .report-close-button {
+#ic-reportIssueModal #ic-reportCloseButton { /* Refactored ID */
     background: none;
     border: none;
     color: #94a3b8;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 24px; /* Ensure icon size */
     padding: 4px;
     display: flex;
     align-items: center;
@@ -92,29 +79,22 @@
     border-radius: 50%;
     transition: all 0.2s ease;
 }
-
-#reportIssueModal .report-close-button:hover {
+#ic-reportIssueModal #ic-reportCloseButton:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #e1e5ee;
 }
 
-/* Tab Navigation Styles */
-#reportIssueModal .report-tabs {
+/* --- Tabs --- */
+#ic-reportIssueModal .ic-report-tabs { /* Refactored class */
     display: flex;
     background: rgba(0, 0, 0, 0.1);
     padding: 2px;
     border-radius: 8px;
     margin: 15px 28px 0;
+    flex-shrink: 0; /* Prevent tabs from shrinking */
 }
 
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-tabs {
-        background: rgba(0, 0, 0, 0.03);
-        border: 1px solid rgba(0, 0, 0, 0.06);
-    }
-}
-
-#reportIssueModal .report-tab {
+#ic-reportIssueModal .ic-report-tab { /* Refactored class */
     flex: 1;
     background: none;
     border: none;
@@ -128,27 +108,12 @@
     position: relative;
     overflow: hidden;
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-tab {
-        color: #64748b;
-    }
-}
-
-#reportIssueModal .report-tab.active {
+#ic-reportIssueModal .ic-report-tab.active {
     color: #ffffff;
     background: linear-gradient(135deg, #3a4b8c, #4d5d8c);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-tab.active {
-        background: linear-gradient(135deg, #5a77d8, #7765d4);
-        color: #ffffff;
-    }
-}
-
-#reportIssueModal .report-tab::after {
+#ic-reportIssueModal .ic-report-tab::after {
     content: '';
     position: absolute;
     top: 0;
@@ -158,195 +123,135 @@
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     transition: 0.5s;
 }
-
-#reportIssueModal .report-tab:hover::after {
+#ic-reportIssueModal .ic-report-tab:hover::after {
     left: 100%;
 }
 
-/* View Transitions */
-#reportIssueModal .report-modal-body {
-    padding: 25px 28px 30px;
-    overflow-y: auto;
-    flex: 1;
-    position: relative;
+/* --- Modal Body & Views --- */
+#ic-reportIssueModal #ic-reportModalBody { /* Refactored ID */
+    overflow-y: auto; /* Enable scrolling for content */
+    flex-grow: 1; /* Allow body to take remaining space */
+    position: relative; /* Needed for absolute positioning of views */
+    padding: 0; /* Remove padding from body, add to views */
 }
 
-#reportIssueModal .report-view {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 25px 28px 30px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+#ic-reportIssueModal .ic-report-view { /* Refactored class */
+    /* Removed absolute positioning for simpler active state toggle */
+    display: none; /* Hide inactive views */
+    padding: 25px 28px 30px; /* Add padding here */
+    /* Add transition if desired, though display:none doesn't transition */
+    /* opacity: 0;
+    transition: opacity 0.3s ease; */
 }
 
-#reportIssueModal .report-view.active {
-    position: relative;
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(0);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0s;
+#ic-reportIssueModal .ic-report-view.active {
+    display: block; /* Show active view */
+    /* opacity: 1; */
+    animation: ic-viewFadeIn 0.3s ease forwards; /* Optional fade-in */
 }
 
-#reportIssueModal .report-view.slide-left {
-    transform: translateX(-20px);
-}
-
-#reportIssueModal .report-view.slide-right {
-    transform: translateX(20px);
-}
-
-/* Form Elements */
-#reportIssueModal .report-form-group {
+/* --- Form Elements --- */
+#ic-reportIssueModal .ic-report-form-group { /* Refactored */
     margin-bottom: 20px;
 }
-
-#reportIssueModal .report-form-group label {
+#ic-reportIssueModal .ic-report-form-group label {
     display: block;
     margin-bottom: 8px;
     font-size: 14px;
     font-weight: 500;
     color: #94a3b8;
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-form-group label {
-        color: #64748b;
-    }
-}
-
-#reportIssueModal .report-input-container {
+#ic-reportIssueModal .ic-report-input-container { /* Refactored */
     position: relative;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.2s ease;
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-input-container {
-        background: rgba(0, 0, 0, 0.03);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-    }
-}
-
-#reportIssueModal .report-input-container:focus-within {
+#ic-reportIssueModal .ic-report-input-container:focus-within {
     border-color: #4d5d8c;
     box-shadow: 0 0 0 2px rgba(77, 93, 140, 0.2);
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-input-container:focus-within {
-        border-color: #7765d4;
-        box-shadow: 0 0 0 2px rgba(119, 101, 212, 0.2);
-    }
-}
-
-#reportIssueModal .report-input-icon {
+#ic-reportIssueModal .ic-report-input-icon { /* Refactored */
     position: absolute;
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: #94a3b8;
     font-size: 20px;
+    pointer-events: none; /* Prevent icon blocking input */
 }
-
-#reportIssueModal .report-textarea-container .report-input-icon {
+#ic-reportIssueModal .ic-report-textarea-container .ic-report-input-icon { /* Refactored */
     top: 16px;
     transform: none;
 }
-
-#reportIssueModal input,
-#reportIssueModal textarea {
+#ic-reportIssueModal #ic-reportTopic, /* Refactored */
+#ic-reportIssueModal #ic-reportDetails { /* Refactored */
     width: 100%;
     background: transparent;
     border: none;
-    padding: 12px 12px 12px 44px;
+    padding: 12px 12px 12px 44px; /* Ensure padding for icon */
     font-size: 15px;
     color: #e1e5ee;
     outline: none;
+    box-sizing: border-box; /* Include padding in width */
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal input,
-    #reportIssueModal textarea {
-        color: #343a40;
-    }
-}
-
-#reportIssueModal textarea {
+#ic-reportIssueModal #ic-reportDetails { /* Refactored */
     min-height: 120px;
     resize: vertical;
     line-height: 1.5;
+    padding: 12px 12px 12px 44px; /* Consistent padding */
 }
-
-#reportIssueModal ::placeholder {
+#ic-reportIssueModal ::placeholder {
     color: #6b7280;
     opacity: 0.7;
 }
 
-/* Form Actions */
-#reportIssueModal .report-form-actions {
+/* --- Form Actions --- */
+#ic-reportIssueModal .ic-report-form-actions { /* Refactored */
     display: flex;
     justify-content: flex-end;
     margin-top: 30px;
 }
-
-#reportIssueModal .report-primary-button {
-    display: flex;
+#ic-reportIssueModal .ic-report-primary-button { /* Refactored */
+    display: inline-flex; /* Use inline-flex */
     align-items: center;
+    justify-content: center; /* Center content */
     background: linear-gradient(135deg, #3a4b8c, #4d5d8c);
     border: none;
     color: white;
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: 500;
+    font-size: 15px; /* Match input */
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(77, 93, 140, 0.2);
     transition: all 0.2s ease;
+    line-height: 1; /* Prevent extra space */
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-primary-button {
-        background: linear-gradient(135deg, #5a77d8, #7765d4);
-    }
-}
-
-#reportIssueModal .report-primary-button:hover {
+#ic-reportIssueModal .ic-report-primary-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(77, 93, 140, 0.3);
 }
-
-#reportIssueModal .report-primary-button:active {
+#ic-reportIssueModal .ic-report-primary-button:active {
     transform: translateY(0);
     box-shadow: 0 2px 8px rgba(77, 93, 140, 0.2);
 }
-
-#reportIssueModal .report-primary-button:disabled {
+#ic-reportIssueModal .ic-report-primary-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     background: #2a3150;
     box-shadow: none;
+    transform: none; /* Disable hover/active effects */
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .report-primary-button:disabled {
-        background: #c5cde8;
-    }
-}
-
-#reportIssueModal .report-primary-button .material-icons {
+#ic-reportIssueModal .ic-report-primary-button .material-icons {
     margin-right: 8px;
-    font-size: 18px;
+    font-size: 18px; /* Match icon size */
 }
 
-/* Issues List Styles */
-#reportIssueModal .issues-loading,
-#reportIssueModal .issues-empty {
+/* --- Issues List Styles --- */
+#ic-reportIssueModal .ic-issues-loading, /* Refactored */
+#ic-reportIssueModal .ic-issues-empty { /* Refactored */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -355,114 +260,85 @@
     color: #94a3b8;
     text-align: center;
 }
-
-#reportIssueModal .loading-spinner {
+#ic-reportIssueModal .ic-loading-spinner { /* Refactored */
     width: 40px;
     height: 40px;
     border: 3px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     border-top-color: #4d5d8c;
-    animation: spinner 1s linear infinite;
+    animation: ic-spinner 1s linear infinite; /* Refactored */
     margin-bottom: 16px;
 }
-
-@keyframes spinner {
-    to { transform: rotate(360deg); }
-}
-
-#reportIssueModal .issues-list {
+#ic-reportIssueModal .ic-issues-list { /* Refactored */
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-
-#reportIssueModal .issue-item {
+#ic-reportIssueModal .ic-issue-item { /* Refactored */
     background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
     padding: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: left; /* Ensure text aligns left */
+    color: inherit; /* Inherit text color */
+    font: inherit; /* Inherit font */
+    width: 100%; /* Take full width */
+    box-sizing: border-box;
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .issue-item {
-        background: rgba(0, 0, 0, 0.03);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-}
-
-#reportIssueModal .issue-item:hover {
+#ic-reportIssueModal .ic-issue-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     background: rgba(255, 255, 255, 0.08);
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .issue-item:hover {
-        background: rgba(0, 0, 0, 0.05);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-}
-
-#reportIssueModal .issue-title {
+#ic-reportIssueModal .ic-issue-title { /* Refactored */
     font-weight: 500;
     font-size: 16px;
     margin-bottom: 8px;
     color: #e1e5ee;
+    display: flex; /* For unread indicator alignment */
+    align-items: center;
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .issue-title {
-        color: #343a40;
-    }
+#ic-reportIssueModal .ic-issue-title.unread .ic-unread-indicator { /* Refactored */
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #4d5d8c; /* Or your theme color */
+    border-radius: 50%;
+    margin-left: 8px;
+    vertical-align: middle; /* Align with text */
 }
-
-#reportIssueModal .issue-meta {
+#ic-reportIssueModal .ic-issue-meta { /* Refactored */
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 12px;
     color: #94a3b8;
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .issue-meta {
-        color: #64748b;
-    }
-}
-
-#reportIssueModal .issue-status-badge {
+#ic-reportIssueModal .ic-issue-status-badge { /* Refactored */
     padding: 4px 8px;
     border-radius: 100px;
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
+    line-height: 1; /* Prevent extra space */
 }
+/* Status Badge Colors */
+#ic-reportIssueModal .ic-issue-status-badge.open { background: rgba(79, 70, 229, 0.1); color: #818cf8; }
+#ic-reportIssueModal .ic-issue-status-badge.in-progress { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+#ic-reportIssueModal .ic-issue-status-badge.resolved { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+#ic-reportIssueModal .ic-issue-status-badge.closed { background: rgba(100, 116, 139, 0.1); color: #64748b; }
 
-#reportIssueModal .issue-status-badge.open {
-    background: rgba(79, 70, 229, 0.1);
-    color: #818cf8;
-}
 
-#reportIssueModal .issue-status-badge.in-progress {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
-}
-
-#reportIssueModal .issue-status-badge.resolved {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-}
-
-/* Issue Detail View Styles */
-#reportIssueModal .issue-detail-header {
+/* --- Issue Detail View --- */
+#ic-reportIssueModal .ic-issue-detail-header { /* Refactored */
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    flex-shrink: 0; /* Prevent shrinking */
 }
-
-#reportIssueModal .back-button {
+#ic-reportIssueModal #ic-backToIssuesButton { /* Refactored ID */
     background: rgba(255, 255, 255, 0.08);
     border: none;
     border-radius: 50%;
@@ -475,60 +351,150 @@
     margin-right: 15px;
     color: #94a3b8;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .back-button {
-        background: rgba(0, 0, 0, 0.05);
-    }
-}
-
-#reportIssueModal .back-button:hover {
+#ic-reportIssueModal #ic-backToIssuesButton:hover {
     background: rgba(255, 255, 255, 0.15);
     color: #e1e5ee;
     transform: translateX(-2px);
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .back-button:hover {
-        background: rgba(0, 0, 0, 0.1);
-        color: #343a40;
-    }
+#ic-reportIssueModal #ic-issueDetailTitle { /* Refactored ID */
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    flex-grow: 1; /* Take remaining space */
+    color: #e1e5ee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
-#reportIssueModal .issue-detail-content {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 20px;
+#ic-reportIssueModal #ic-issueDetailContent { /* Refactored ID */
+    /* No background needed if bubbles have their own */
+    /* background: rgba(255, 255, 255, 0.05); */
+    padding: 0px; /* Remove padding, handled by bubbles */
     border-radius: 10px;
     margin-bottom: 20px;
     line-height: 1.6;
     color: #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between bubbles */
 }
-
-@media (prefers-color-scheme: light) {
-    #reportIssueModal .issue-detail-content {
-        background: rgba(0, 0, 0, 0.03);
-        color: #4b5563;
-    }
+#ic-reportIssueModal .ic-issue-detail-footer { /* Refactored */
+    margin-top: 20px; /* Space above footer */
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 15px;
+    flex-shrink: 0;
 }
-
-#reportIssueModal .status-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 100px;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
+#ic-reportIssueModal #ic-issueStatus { /* Refactored ID */
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #94a3b8;
+}
+#ic-reportIssueModal #ic-statusBadge { /* Refactored ID */
+    /* Styles already defined for .ic-issue-status-badge */
     margin-right: 10px;
 }
+#ic-reportIssueModal #ic-statusDate { /* Refactored ID */
+    /* Styles inherited or default */
+}
 
-/* Animation Keyframes */
-@keyframes reportModalFadeIn {
+/* --- Conversation Bubbles --- */
+#ic-reportIssueModal .ic-conversation-bubble { /* Refactored */
+    padding: 12px 16px;
+    border-radius: 12px;
+    max-width: 85%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    word-wrap: break-word; /* Ensure long words break */
+}
+#ic-reportIssueModal .ic-user-bubble { /* Refactored */
+    background: linear-gradient(135deg, #2a3150, #3a4b8c);
+    color: #e1e5ee;
+    margin-left: auto; /* Align user bubbles to the right */
+    border-bottom-right-radius: 4px; /* Pointy corner */
+}
+#ic-reportIssueModal .ic-admin-bubble { /* Refactored */
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    margin-right: auto; /* Align admin bubbles to the left */
+    border-bottom-left-radius: 4px; /* Pointy corner */
+}
+#ic-reportIssueModal .ic-bubble-header { /* Refactored */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 11px;
+    opacity: 0.7;
+}
+#ic-reportIssueModal .ic-bubble-author { /* Refactored */
+    font-weight: 500;
+}
+#ic-reportIssueModal .ic-bubble-content { /* Refactored */
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap; /* Preserve line breaks */
+}
+#ic-reportIssueModal .ic-no-responses { /* Refactored */
+    text-align: center;
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 13px;
+    padding: 20px 0;
+}
+
+/* --- Reply Section --- */
+#ic-reportIssueModal .ic-user-reply-section { /* Refactored */
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 20px;
+}
+#ic-reportIssueModal #ic-userReplyTextarea { /* Refactored */
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 12px; /* No icon, simpler padding */
+    font-size: 15px;
+    color: #e1e5ee;
+    outline: none;
+    box-sizing: border-box;
+    min-height: 80px;
+    resize: vertical;
+    line-height: 1.5;
+    border-radius: 8px; /* Add radius to textarea */
+}
+#ic-reportIssueModal .ic-reply-actions { /* Refactored */
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+#ic-reportIssueModal #ic-userReplyError { /* Refactored */
+    color: #ef4444; /* Error color */
+    font-size: 13px;
+    margin-top: 8px;
+    min-height: 1em; /* Prevent layout shift */
+}
+#ic-reportIssueModal .ic-issue-closed-notice { /* Refactored */
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* --- Animation Keyframes (Refactored Names) --- */
+@keyframes ic-reportModalFadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-@keyframes reportModalSlideIn {
+@keyframes ic-reportModalSlideIn {
     from {
         opacity: 0;
         transform: scale(0.9) translateY(10px);
@@ -539,27 +505,68 @@
     }
 }
 
-/* Responsive adjustments */
+@keyframes ic-spinner { /* Refactored */
+    to { transform: rotate(360deg); }
+}
+
+@keyframes ic-viewFadeIn { /* Refactored */
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+/* --- Light Theme Adjustments --- */
+@media (prefers-color-scheme: light) {
+    #ic-reportIssueModal { background-color: rgba(0, 0, 0, 0.65); }
+    #ic-reportIssueModal .ic-report-modal-content { background-color: #ffffff; color: #343a40; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); border: 1px solid rgba(0, 0, 0, 0.06); }
+    #ic-reportIssueModal .ic-report-modal-header { border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+    #ic-reportIssueModal .ic-report-modal-header h2 { color: #1f2937; }
+    #ic-reportIssueModal #ic-reportCloseButton { color: #6b7280; }
+    #ic-reportIssueModal #ic-reportCloseButton:hover { background: rgba(0, 0, 0, 0.05); color: #1f2937; }
+    #ic-reportIssueModal .ic-report-tabs { background: rgba(0, 0, 0, 0.03); border: 1px solid rgba(0, 0, 0, 0.06); }
+    #ic-reportIssueModal .ic-report-tab { color: #64748b; }
+    #ic-reportIssueModal .ic-report-tab.active { background: linear-gradient(135deg, #5a77d8, #7765d4); color: #ffffff; }
+    #ic-reportIssueModal .ic-report-form-group label { color: #4b5563; }
+    #ic-reportIssueModal .ic-report-input-container { background: rgba(0, 0, 0, 0.03); border: 1px solid rgba(0, 0, 0, 0.1); }
+    #ic-reportIssueModal .ic-report-input-container:focus-within { border-color: #7765d4; box-shadow: 0 0 0 2px rgba(119, 101, 212, 0.2); }
+    #ic-reportIssueModal .ic-report-input-icon { color: #9ca3af; }
+    #ic-reportIssueModal #ic-reportTopic, #ic-reportIssueModal #ic-reportDetails, #ic-reportIssueModal #ic-userReplyTextarea { color: #1f2937; }
+    #ic-reportIssueModal .ic-report-primary-button { background: linear-gradient(135deg, #5a77d8, #7765d4); box-shadow: 0 4px 12px rgba(119, 101, 212, 0.2); }
+    #ic-reportIssueModal .ic-report-primary-button:hover { box-shadow: 0 6px 16px rgba(119, 101, 212, 0.3); }
+    #ic-reportIssueModal .ic-report-primary-button:active { box-shadow: 0 2px 8px rgba(119, 101, 212, 0.2); }
+    #ic-reportIssueModal .ic-report-primary-button:disabled { background: #e5e7eb; color: #9ca3af; box-shadow: none; }
+    #ic-reportIssueModal .ic-issues-loading, #ic-reportIssueModal .ic-issues-empty { color: #6b7280; }
+    #ic-reportIssueModal .ic-loading-spinner { border-color: rgba(0, 0, 0, 0.1); border-top-color: #7765d4; }
+    #ic-reportIssueModal .ic-issue-item { background: rgba(0, 0, 0, 0.03); border: 1px solid rgba(0, 0, 0, 0.05); }
+    #ic-reportIssueModal .ic-issue-item:hover { background: rgba(0, 0, 0, 0.05); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }
+    #ic-reportIssueModal .ic-issue-title { color: #1f2937; }
+    #ic-reportIssueModal .ic-issue-meta { color: #6b7280; }
+    #ic-reportIssueModal #ic-backToIssuesButton { background: rgba(0, 0, 0, 0.05); color: #6b7280; }
+    #ic-reportIssueModal #ic-backToIssuesButton:hover { background: rgba(0, 0, 0, 0.1); color: #1f2937; }
+    #ic-reportIssueModal #ic-issueDetailTitle { color: #1f2937; }
+    /* #ic-reportIssueModal #ic-issueDetailContent { background: rgba(0, 0, 0, 0.03); color: #4b5563; } */
+    #ic-reportIssueModal .ic-user-bubble { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+    #ic-reportIssueModal .ic-admin-bubble { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+    #ic-reportIssueModal .ic-bubble-header { opacity: 0.8; }
+    #ic-reportIssueModal .ic-no-responses { color: #6b7280; }
+    #ic-reportIssueModal .ic-issue-detail-footer { border-top: 1px solid rgba(0, 0, 0, 0.08); }
+    #ic-reportIssueModal #ic-issueStatus { color: #6b7280; }
+    #ic-reportIssueModal .ic-user-reply-section { border-top: 1px solid rgba(0, 0, 0, 0.08); }
+    #ic-reportIssueModal .ic-issue-closed-notice { background: rgba(0, 0, 0, 0.03); color: #6b7280; }
+}
+
+
+/* --- Responsive adjustments --- */
 @media (max-width: 576px) {
-    #reportIssueModal .report-modal-content {
+    #ic-reportIssueModal .ic-report-modal-content {
         max-width: calc(100% - 20px);
         margin: 10px;
         max-height: calc(100vh - 20px);
     }
-
-    #reportIssueModal .report-modal-header {
-        padding: 18px 20px;
-    }
-
-    #reportIssueModal .report-modal-body {
-        padding: 22px;
-    }
-
-    #reportIssueModal .report-form-actions {
-        justify-content: stretch;
-    }
-
-    #reportIssueModal .report-primary-button {
-        width: 100%;
-    }
+    #ic-reportIssueModal .ic-report-modal-header { padding: 18px 20px; }
+    #ic-reportIssueModal #ic-reportModalBody { /* Padding applied to views now */ }
+    #ic-reportIssueModal .ic-report-view { padding: 22px; } /* Adjust view padding */
+    #ic-reportIssueModal .ic-report-tabs { margin-left: 20px; margin-right: 20px; }
+    #ic-reportIssueModal .ic-report-form-actions { justify-content: stretch; }
+    #ic-reportIssueModal .ic-report-primary-button { width: 100%; }
 }
