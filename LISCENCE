@@ -1,0 +1,94 @@
+TERMS OF SERVICE - Sangeet Premium
+
+Effective Date:April 10 2025
+
+PLEASE READ THESE TERMS OF SERVICE CAREFULLY. BY ACCESSING OR USING THE SANGEET PREMIUM SOFTWARE OR SERVICE (THE "SERVICE"), YOU AGREE TO BE BOUND BY THESE TERMS. IF YOU DO NOT AGREE TO ALL OF THESE TERMS, DO NOT ACCESS OR USE THE SERVICE.
+
+1. Introduction and Scope
+--------------------------
+These Terms of Service ("Terms") govern your access to and use of the Sangeet Premium software, associated services, code, and documentation (collectively, the "Service"). The Service is an open-source project developed and maintained by easy-ware and potentially other contributors (collectively, "easy-ware," "We," "Us," or "Our"). These Terms constitute a legally binding agreement between you ("User," "You," or "Your") and easy-ware regarding Your use of the Service. **BY ACCESSING OR USING THE SERVICE, YOU AGREE TO BE BOUND BY THESE TERMS. IF YOU DO NOT AGREE, DO NOT USE THE SERVICE.**
+
+2. ACKNOWLEDGEMENT OF EDUCATIONAL AND EXPERIMENTAL PURPOSE
+---------------------------------------------------------
+You explicitly acknowledge and agree that the Service is provided **STRICTLY AND SOLELY FOR EDUCATIONAL, EXPERIMENTAL, TECHNICAL EXPLORATION, RESEARCH, AND PERSONAL, NON-COMMERCIAL ENJOYMENT PURPOSES.** The Service is a proof-of-concept demonstrating technical capabilities using publicly available tools and APIs.
+
+**IT IS NOT INTENDED FOR, AND MUST NOT BE USED FOR:**
+    - Commercial purposes of any kind.
+    - Replacing or circumventing legitimate, licensed music streaming or download services.
+    - Enterprise, business, or mission-critical applications.
+    - Any activity that infringes upon the intellectual property rights of others.
+    - Any illegal or unauthorized purpose.
+
+3. Open-Source Nature, Modifications, and Verification
+-----------------------------------------------------
+(a) License: The Service's source code is made available under the specific open-source license detailed in the official project repository (the "License"). You may use, modify, and distribute the source code solely in accordance with the terms of that License. The official source code repository is located at: https://github.com/easy-ware/Sangeet-Premium-plus ("Official Repository").
+
+(b) Third-Party Instances: Due to its open-source nature, third parties may copy, modify, and host their own instances of the Service. easy-ware has **NO CONTROL OVER, AND ASSUMES NO RESPONSIBILITY FOR,** any instance of the Service not obtained directly from the Official Repository or hosted by the original maintainers.
+
+(c) User Verification Duty: **YOU ARE SOLELY RESPONSIBLE** for verifying the authenticity, integrity, and trustworthiness of any instance of the Service You choose to use. Third-party instances may contain modifications, malicious code (malware, spyware), trackers, inaccurate information, or may operate in violation of applicable laws or these Terms. Accessing or using non-official instances is **ENTIRELY AT YOUR OWN RISK.**
+
+(d) Modifications: If You modify the Service, You must comply with the terms of the applicable License. If You distribute a modified version, You must clearly indicate that it is a modified version and not the official release. You must also retain these Terms of Service, including all disclaimers and limitations of liability, within any modified version You distribute.
+
+4. Service Functionality and Content Access
+-------------------------------------------
+(a) Interface: The Service acts as an interface or tool that may utilize publicly available Application Programming Interfaces (APIs), open-source libraries (such as yt-dlp), and other publicly accessible resources to search for, access, stream, or interact with audio content hosted on third-party platforms ("Third-Party Platforms").
+
+(b) No Content Ownership or Rights Granted: easy-ware does **NOT** host, store, control, endorse, or claim ownership of any audio content that may be accessible through the Service. The Service itself does not grant You any rights, licenses, or permissions to access, download, reproduce, distribute, or otherwise use any content obtained through it.
+
+(c) Third-Party Terms and Copyright: Your ability to access and use content from Third-Party Platforms is governed entirely by the terms of service, usage policies, and copyright restrictions of those specific platforms, as well as applicable copyright laws. **YOU ARE SOLELY RESPONSIBLE FOR ENSURING YOUR USE OF THE SERVICE TO ACCESS CONTENT COMPLIES WITH ALL TERMS AND CONDITIONS OF THE RELEVANT THIRD-PARTY PLATFORMS AND ALL APPLICABLE COPYRIGHT LAWS.** The Service is not designed or intended to circumvent any access controls or restrictions imposed by Third-Party Platforms.
+
+5. User Responsibilities and Prohibited Conduct
+----------------------------------------------
+You agree that You are solely responsible for Your conduct while using the Service and for any consequences thereof. You agree **NOT** to use the Service:
+    (a) For any illegal, infringing, unauthorized, or fraudulent purpose.
+    (b) To download, stream, reproduce, distribute, publicly perform, display, or create derivative works from any content unless You have the explicit legal right and necessary permissions from the content owner(s) and comply with the terms of the source Third-Party Platform.
+    (c) To violate any applicable local, state, national, or international law, rule, or regulation, including but not limited to copyright, trademark, and data privacy laws.
+    (d) To circumvent, disable, or otherwise interfere with security-related features of the Service or any Third-Party Platform.
+    (e) To engage in any activity that could harm, overburden, or impair the functioning of the Service or any Third-Party Platform accessed through it.
+    (f) To sell, rent, lease, sublicense, or otherwise commercially exploit the Service or any content accessed through it.
+    (g) To misrepresent Your identity or affiliation with any person or entity.
+
+6. Intellectual Property
+------------------------
+(a) Service IP: The Service's source code, design, structure, and associated documentation are protected by copyright and other intellectual property laws and are licensed under the terms specified in the Official Repository.
+
+(b) Content IP: All rights, title, and interest in and to the audio content accessed through the Service belong to the respective content owners or their licensors. These Terms do not grant You any rights to such content.
+
+7. DISCLAIMERS AND LIMITATION OF LIABILITY
+------------------------------------------
+(a) **SERVICE PROVIDED "AS IS":** YOUR USE OF THE SERVICE IS AT YOUR SOLE RISK. THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS, IMPLIED, OR STATUTORY.
+
+(b) **NO WARRANTIES:** TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, EASY-WARE AND ITS CONTRIBUTORS EXPRESSLY DISCLAIM ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, ACCURACY, AND NON-INFRINGEMENT. EASY-WARE DOES NOT WARRANT THAT (I) THE SERVICE WILL MEET YOUR REQUIREMENTS; (II) THE SERVICE WILL BE UNINTERRUPTED, TIMELY, SECURE, OR ERROR-FREE; (III) THE RESULTS THAT MAY BE OBTAINED FROM THE USE OF THE SERVICE WILL BE ACCURATE OR RELIABLE; (IV) THE QUALITY OF ANY CONTENT, SERVICES, INFORMATION, OR OTHER MATERIAL ACCESSED OR OBTAINED BY YOU THROUGH THE SERVICE WILL MEET YOUR EXPECTATIONS; OR (V) ANY ERRORS IN THE SOFTWARE WILL BE CORRECTED.
+
+(c) **NO LIABILITY FOR CONTENT:** EASY-WARE HAS NO CONTROL OVER AND ASSUMES NO RESPONSIBILITY FOR THE CONTENT, ACCURACY, LEGALITY, OR DECENCY OF MATERIAL ACCESSED THROUGH THE SERVICE FROM THIRD-PARTY PLATFORMS.
+
+(d) **LIMITATION OF LIABILITY:** YOU EXPRESSLY UNDERSTAND AND AGREE THAT EASY-WARE, ITS CONTRIBUTORS, AND MAINTAINERS SHALL **NOT BE LIABLE** TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES WHATSOEVER, INCLUDING BUT NOT LIMITED TO, DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, LEGAL FEES, OR OTHER INTANGIBLE LOSSES (EVEN IF EASY-WARE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES), RESULTING FROM: (I) THE USE OR THE INABILITY TO USE THE SERVICE; (II) THE COST OF PROCUREMENT OF SUBSTITUTE GOODS AND SERVICES RESULTING FROM ANY GOODS, DATA, INFORMATION, OR SERVICES PURCHASED OR OBTAINED OR MESSAGES RECEIVED OR TRANSACTIONS ENTERED INTO THROUGH OR FROM THE SERVICE; (III) UNAUTHORIZED ACCESS TO OR ALTERATION OF YOUR TRANSMISSIONS OR DATA; (IV) STATEMENTS OR CONDUCT OF ANY THIRD PARTY ON THE SERVICE OR ACCESSED THROUGH THE SERVICE; (V) ANY LEGAL ACTION, CLAIM, OR CONSEQUENCE ARISING FROM YOUR USE OF THE SERVICE OR CONTENT ACCESSED THERETHROUGH; (VI) ANY DAMAGE TO YOUR COMPUTER SYSTEM OR LOSS OF DATA THAT RESULTS FROM THE DOWNLOAD OR USE OF THE SERVICE; OR (VII) ANY OTHER MATTER RELATING TO THE SERVICE. THIS LIMITATION APPLIES REGARDLESS OF THE LEGAL THEORY ASSERTED (WHETHER CONTRACT, TORT, NEGLIGENCE, STRICT LIABILITY, OR OTHERWISE).
+
+(e) **JURISDICTIONAL LIMITATIONS:** SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF CERTAIN WARRANTIES OR THE LIMITATION OR EXCLUSION OF LIABILITY FOR INCIDENTAL OR CONSEQUENTIAL DAMAGES. ACCORDINGLY, SOME OF THE ABOVE LIMITATIONS MAY NOT APPLY TO YOU. IN SUCH JURISDICTIONS, EASY-WARE'S LIABILITY WILL BE LIMITED TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW.
+
+8. No Endorsement or Affiliation
+--------------------------------
+The Service is an independent project and is not affiliated with, associated with, authorized by, endorsed by, or in any way officially connected with YouTube, YouTube Music, Google LLC, or any other Third-Party Platform, content provider, or their affiliates or subsidiaries. Any names, logos, or trademarks mentioned are the property of their respective owners.
+
+9. Modification of Terms
+------------------------
+easy-ware reserves the right, at its sole discretion, to modify or replace these Terms at any time. If a revision is material, we will make reasonable efforts to provide notice prior to any new terms taking effect (e.g., by updating the "Last Updated" date and potentially posting a notice in the Official Repository). What constitutes a material change will be determined at our sole discretion. By continuing to access or use the Service after those revisions become effective, You agree to be bound by the revised terms. If You do not agree to the new terms, You must stop using the Service.
+
+10. Governing Law
+-----------------
+These Terms are intended to be interpreted broadly under general principles applicable to open-source software provided for educational and experimental use. Any disputes arising from these Terms should, where possible, be resolved by reference to the project information and issue trackers in the Official Repository.
+
+11. Entire Agreement
+--------------------
+These Terms, along with the applicable open-source License specified in the Official Repository, constitute the entire agreement between You and easy-ware regarding the Service and supersede all prior or contemporaneous understandings or agreements, whether written or oral, regarding such subject matter.
+
+12. Contact
+-----------
+For questions about these Terms or the Service, please refer to the information available in the Official Repository:
+https://github.com/easy-ware/Sangeet-Premium-plus
+
+
+In case of discrepancies between terms presented within any specific instance of the Service and these official Terms, these official Terms shall prevail.
+
+---
+Last Updated: April 2025
