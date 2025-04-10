@@ -1,0 +1,2332 @@
+/* ==========================================================================
+   Core / Global Styles
+   ========================================================================== */
+
+/* CSS Reset and Root Variables */
+/* Resets basic browser styles and defines custom CSS variables for theming */
+:root {
+  --background-color: #0f172a; /* Deep navy background */
+  --surface-color: #1e293b;    /* Darker surface color for containers */
+  --card-color: #334155;       /* Card background color */
+  --text-primary: #f8fafc;     /* Primary text color, near white */
+  --text-secondary: #94a3b8;   /* Secondary text color, grayish */
+  --accent-gradient: linear-gradient(135deg, #4f46e5, #818cf8); /* Gradient for accent elements */
+  --error-color: #ef4444;      /* Error message color, red */
+  --primary-light: #818cf8;    /* Lighter shade of primary accent color */
+  --marquee-speed: 14s;        /* Speed for marquee animation */
+  /* Gradient for Music Icons */
+  --icon-music-gradient: linear-gradient(45deg, #ff66cc, #cc66ff, #66ccff, #66ffcc);
+}
+
+/* Light Theme Icon Override (Example - Was present in original) */
+[data-theme="light"] {
+  --icon-music-gradient: linear-gradient(45deg, #ffb3d9, #d9b3ff, #b3d9ff, #b3ffd9);
+}
+
+/* Global Styles */
+/* Styles applied to the entire body and general layout */
+body {
+  margin: 0; /* Reset default body margin */
+  font-family: sans-serif; /* Use sans-serif as the default font */
+  background-color: var(--background-color); /* Set body background color from root variable */
+  color: var(--text-primary); /* Set default text color from root variable */
+  min-height: 100vh; /* Ensure body takes at least full viewport height */
+  /* Subtle radial gradients for background texture */
+  background-image:
+    radial-gradient(circle at 15% 50%, rgba(79,70,229,0.15) 0%, transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(129,140,248,0.1) 0%, transparent 25%);
+}
+
+/* Container Styles */
+/* Styles for the main content container to limit width and center content */
+.container {
+  max-width: 1200px; /* Maximum width of the container */
+  margin: 0 auto;    /* Center the container horizontally */
+  padding: 1rem 2rem 5rem; /* Padding around the container (top, horizontal, bottom) */
+  /* Ensure container spacing remains consistent with sticky search bar */
+  padding-top: 0;    /* Remove top padding to accommodate sticky search bar */
+}
+
+/* Material Icons Base Style (with Gradient) */
+.material-icons {
+  background: var(--icon-music-gradient);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: musicFlow 6s ease-in-out infinite;
+  transition: transform 0.2s ease;
+}
+
+
+/* ==========================================================================
+   Search Component
+   ========================================================================== */
+
+/* Search Container Styles */
+/* Styles for the search bar area, including input and icons */
+.search-container {
+  position: relative;  /* Position relative to contain absolute positioned icons */
+  max-width: 600px;   /* Maximum width of the search container */
+  margin: 0 auto 1rem; /* Center and add bottom margin */
+  display: flex;      /* Use flexbox for icon alignment */
+  align-items: center; /* Vertically align items in the flex container */
+  /* Sticky behavior applied later (last rule takes precedence) */
+  position: sticky;   /* Make the search container sticky at the top of the viewport */
+  top: 0;            /* Stick to the top */
+  z-index: 40;        /* Ensure it's above other content */
+  background: var(--background-color); /* Match background color */
+  margin-top:6%;      /* Add top margin */
+  border-radius:50px; /* Rounded corners for the search container */
+}
+
+.search-icons {
+  position: absolute; /* Position icons to the right of the input */
+  right: 1rem;       /* Distance from the right edge of the search container */
+  top: 50%;          /* Vertically center the icons */
+  transform: translateY(-50%); /* Adjust vertical centering precisely */
+  display: flex;      /* Use flexbox for spacing icons */
+  align-items: center; /* Vertically align icons */
+  gap: 0.75rem;      /* Spacing between icons */
+  z-index: 10;       /* Ensure icons are above the input field */
+}
+
+.search-input {
+  width: 100%; /* Input takes full width of its container */
+  padding: 1rem 6rem 1rem 1rem; /* Padding for input text and icon space */
+  border-radius: 16px; /* Rounded corners for input */
+  border: 2px solid rgba(255,255,255,0.1); /* Light border */
+  background-color: var(--surface-color); /* Background color from root variables */
+  color: var(--text-primary); /* Text color from root variables */
+  font-size: 1rem; /* Base font size */
+  transition: all 0.3s ease; /* Smooth transition for focus effects */
+}
+
+.search-input:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: var(--primary-light); /* Highlight border on focus */
+  box-shadow: 0 0 0 2px rgba(129,140,248,0.1); /* Subtle shadow on focus */
+}
+
+.search-icon {
+  cursor: pointer; /* Indicate icon is clickable */
+  color: var(--text-secondary); /* Icon color from root variables */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  padding: 8px; /* Padding around the icon for touch target */
+  border-radius: 50%; /* Make icon background circular on hover */
+  display: flex;      /* Use flexbox to center icon content */
+  align-items: center; /* Center icon vertically */
+  justify-content: center; /* Center icon horizontally */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+.search-icon:hover {
+  color: var(--text-primary); /* Icon color on hover */
+  background: rgba(255,255,255,0.1); /* Background on hover */
+}
+
+.search-icon.listening {
+  color: var(--primary-light); /* Highlight color when listening */
+  animation: pulse 1.5s infinite; /* Pulse animation when listening */
+}
+
+.broom-icon {
+  display: none; /* Initially hidden, shown when search input has content */
+}
+
+/* Search Icon Specific Material Icon Override */
+.search-icon .material-icons {
+  background: none; /* Remove gradient */
+  -webkit-text-fill-color: var(--text-secondary); /* Use standard text color */
+  animation: none; /* Remove flow animation */
+}
+
+.search-icon:hover .material-icons {
+  -webkit-text-fill-color: var(--text-primary); /* Change color on hover */
+}
+
+.search-icon.listening .material-icons {
+  /* Re-apply gradient when listening */
+  background: var(--icon-music-gradient);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Keep pulse animation, re-add music flow */
+  animation: pulse 1.5s infinite, musicFlow 6s ease-in-out infinite;
+}
+
+
+/* ==========================================================================
+   Results / Song Cards
+   ========================================================================== */
+
+/* Results Container Styles */
+/* Styles for the grid container that holds song cards */
+.results-container {
+  display: grid;                 /* Use grid layout for song cards */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid columns */
+  gap: 1rem;                     /* Spacing between grid items */
+  transition: 0.3s;             /* Transition for layout changes */
+  margin-bottom: 2rem;            /* Bottom margin below results */
+}
+
+/* Song Card Styles */
+/* Styles for individual song cards in the results grid */
+.song-card {
+  background-color: var(--card-color); /* Card background color from root variables */
+  border-radius: 12px;              /* Rounded corners for song cards */
+  overflow: hidden;                 /* Ensure image and content stay within rounded borders */
+  cursor: pointer;                  /* Indicate card is clickable */
+  transition: transform 0.3s;      /* Smooth transform on hover */
+}
+
+.song-card:hover {
+  transform: scale(1.03); /* Scale up slightly on hover */
+}
+
+.song-thumbnail-container {
+  position: relative;      /* Position relative to overlay duration */
+  padding-top: 56.25%;    /* Maintain 16:9 aspect ratio for thumbnails */
+  overflow: hidden;         /* Clip thumbnail to container */
+}
+
+.song-thumbnail {
+  position: absolute;    /* Position thumbnail to fill container */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* Ensure thumbnail covers the container */
+  transition: 0.3s;    /* Smooth transition for hover effect */
+}
+
+.song-card:hover .song-thumbnail {
+  transform: scale(1.08); /* Scale up thumbnail on card hover */
+}
+
+.song-duration {
+  position: absolute;    /* Position duration text over thumbnail */
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.8rem;   /* Small font size for duration */
+  background: rgba(0,0,0,0.5); /* Semi-transparent background for duration */
+  padding: 0.2rem 0.4rem; /* Padding around duration text */
+  border-radius: 1rem;   /* Rounded corners for duration background */
+}
+
+/* .song-info defined multiple times, using the LATER definitions found within .artist-overview-container */
+/* Original .song-info definition (potentially overridden later) */
+/*
+.song-info {
+  padding: 0.5rem 1rem;
+}
+*/
+
+.song-title {
+  font-weight: 600;    /* Bold song title */
+  font-size: 1rem;     /* Song title font size */
+  margin-bottom: 0.25rem; /* Spacing below title */
+  overflow: hidden;     /* Hide overflow text */
+  text-overflow: ellipsis; /* Show ellipsis for overflow text */
+  white-space: nowrap;  /* Prevent text from wrapping */
+}
+
+.song-artist {
+  color: var(--text-secondary); /* Artist name color from root variables */
+  font-size: 0.9rem;     /* Artist name font size */
+  overflow: hidden;     /* Hide overflow text */
+  text-overflow: ellipsis; /* Show ellipsis for overflow text */
+  white-space: nowrap;  /* Prevent text from wrapping */
+}
+
+/* ==========================================================================
+   Skeleton Loading
+   ========================================================================== */
+
+.skeleton {
+  background: linear-gradient( /* Gradient for shimmer effect */
+    90deg,
+    var(--surface-color) 25%,
+    var(--card-color) 50%,
+    var(--surface-color) 75%
+  );
+  background-size: 200% 100%; /* Double size for animation effect */
+  animation: shimmer 1.5s infinite; /* Apply shimmer animation infinitely */
+  height: 200px; /* Fixed height for skeleton placeholders */
+}
+
+/* Skeleton for Progress Bar */
+.progress-skeleton {
+  position: absolute; /* Overlay skeleton over progress bar */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--surface-color) 25%, var(--card-color) 50%, var(--surface-color) 75%); /* Shimmer gradient */
+  background-size: 200% 100%; /* Size for shimmer animation */
+  animation: shimmer 1.5s infinite; /* Apply shimmer animation infinitely */
+  opacity: 0;          /* Initially hidden */
+  pointer-events: none; /* Ensure it doesn't block interactions */
+  transition: opacity 0.3s; /* Smooth opacity transition */
+}
+
+/* Skeleton for Playlist Loading */
+.skeleton-loading {
+  background: #eee;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite; /* Pulsing animation */
+}
+
+
+/* ==========================================================================
+   Mini Player
+   ========================================================================== */
+
+.mini-player {
+  position: fixed;      /* Fixed position at the bottom */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(30,41,59,0.95); /* Semi-transparent background */
+  border-top: 1px solid rgba(255,255,255,0.1); /* Top border for separation */
+  z-index: 50;        /* Ensure it's above most content */
+  transition: 0.3s;    /* Smooth transition for show/hide animation */
+  display: flex;      /* Use flexbox for layout */
+  align-items: center; /* Vertically align items in the flex container */
+  gap: 1rem;         /* Spacing between mini player sections */
+  padding: 0.5rem 1rem; /* Padding inside mini player */
+  flex-wrap: wrap;    /* Allow content to wrap on smaller screens */
+}
+
+.mini-player.hidden {
+  transform: translateY(100%); /* Slide out animation when hidden */
+}
+
+.mini-player-info {
+  display: flex;      /* Use flexbox for thumbnail and text alignment */
+  align-items: center; /* Vertically align thumbnail and text */
+  gap: 0.75rem;      /* Spacing between thumbnail and text */
+  min-width: 0;       /* Prevent content overflow */
+  flex: 1;          /* Allow info section to grow and take available space */
+  max-width: 260px;   /* Maximum width of info section */
+}
+
+.mini-player-thumb {
+  width: 48px;        /* Fixed width for thumbnail */
+  height: 48px;       /* Fixed height for thumbnail */
+  border-radius: 8px; /* Rounded corners for thumbnail */
+  object-fit: cover;    /* Ensure thumbnail covers the area */
+}
+
+.mini-player-text {
+  overflow: hidden;     /* Hide overflow text */
+  display: flex;      /* Use flexbox for title and artist layout */
+  flex-direction: column; /* Stack title and artist vertically */
+  justify-content: center; /* Vertically center text content */
+  min-width: 0;       /* Prevent content overflow */
+}
+
+.mini-player-title {
+  font-weight: 600;    /* Bold title text */
+  font-size: 0.9rem;   /* Title font size */
+  white-space: nowrap;  /* Prevent text wrapping */
+  overflow: hidden;     /* Hide overflow text */
+  text-overflow: ellipsis; /* Show ellipsis for overflow text */
+}
+
+.mini-player-artist {
+  font-size: 0.8rem;   /* Artist name font size */
+  color: var(--text-secondary); /* Artist name color from root variables */
+  white-space: nowrap;  /* Prevent text wrapping */
+  overflow: hidden;     /* Hide overflow text */
+  text-overflow: ellipsis; /* Show ellipsis for overflow text */
+}
+
+
+/* ==========================================================================
+   Full Player
+   ========================================================================== */
+
+.full-player {
+  position: fixed;
+  inset: 0;
+  background: var(--background-color);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.full-player.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Sticky Header within Full Player */
+.full-player-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: linear-gradient(to bottom, var(--background-color), rgba(15, 23, 42, 0.9));
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Legacy Full Player Header (likely overridden by sticky) */
+.full-player-header {
+  display: flex;      /* Use flexbox for header content */
+  align-items: center; /* Vertically align header items */
+  justify-content: space-between; /* Space out header items */
+  padding: 1rem;         /* Padding in header */
+  border-bottom: 1px solid rgba(255,255,255,0.1); /* Bottom border for header */
+}
+
+/* Scrollable Area */
+.full-player-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.full-player-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.full-player-scrollable::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+}
+
+.full-player-scrollable::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Main Content Area within Scrollable */
+.full-player-main {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Legacy Content Wrapper (potentially overridden by scrollable structure) */
+.full-player-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Album Art */
+.full-player-art {
+  width: 100%;       /* Art width */
+  max-width: 400px;   /* Maximum art width */
+  aspect-ratio: 1;    /* Maintain 1:1 aspect ratio for art */
+  border-radius: 24px; /* Rounded corners for art */
+  overflow: hidden;     /* Clip image to rounded corners */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3); /* Shadow for art */
+  transition: transform 0.3s ease; /* Smooth transform on hover */
+}
+
+.full-player-art:hover {
+  transform: scale(1.02); /* Scale up slightly on hover */
+}
+
+.full-player-art img {
+  width: 100%;       /* Image takes full width of container */
+  height: 100%;      /* Image takes full height of container */
+  object-fit: cover;    /* Ensure image covers the area */
+}
+
+/* Song Info */
+.full-player-info {
+  width: 100%;       /* Info width */
+  text-align: center; /* Center text in info section */
+  display: flex;      /* Use flexbox for info layout */
+  flex-direction: column; /* Stack info elements vertically */
+  align-items: center; /* Center info elements horizontally */
+  gap: 1.5rem;       /* Spacing between info elements */
+}
+
+/* Marquee Effect */
+.marquee {
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden;     /* Hide overflow text */
+  position: relative;  /* Position relative to contain scrolling text */
+  width: 100%;       /* Marquee width */
+  max-width: 600px;   /* Maximum marquee width */
+  margin: 0 auto;    /* Center marquee horizontally */
+}
+
+.marquee span {
+  display: inline-block; /* Ensure inline for continuous scroll */
+  animation: marquee var(--marquee-speed) linear infinite; /* Apply marquee animation infinitely */
+  padding-left: 100%; /* Start text from outside the visible area */
+}
+
+.marquee span:hover {
+  animation-play-state: paused; /* Pause animation on hover */
+}
+
+.full-player-title {
+  font-size: 2rem;     /* Title font size in full player */
+  font-weight: 700;    /* Bold title text */
+  margin-bottom: 0.5rem; /* Spacing below title */
+  line-height: 1.2;     /* Adjust line height for better readability */
+}
+
+.full-player-artist {
+  font-size: 1.25rem;  /* Artist name font size in full player */
+  color: var(--text-secondary); /* Artist name color from root variables */
+  margin-bottom: 1rem;  /* Spacing below artist name */
+}
+
+
+/* ==========================================================================
+   Player Controls (Shared Mini/Full)
+   ========================================================================== */
+
+.player-controls {
+  display: flex;      /* Use flexbox for control button layout */
+  align-items: center; /* Vertically align control buttons */
+  gap: 0.5rem;         /* Spacing between control buttons */
+}
+
+.control-button {
+  width: 36px;        /* Default button width */
+  height: 36px;       /* Default button height */
+  border: none;        /* Remove default button border */
+  border-radius: 50%; /* Make buttons circular */
+  background: none;    /* No background color, uses hover effect */
+  color: var(--text-primary); /* Icon color from root variables */
+  cursor: pointer;      /* Indicate button is clickable */
+  display: flex;      /* Use flexbox to center icon */
+  align-items: center; /* Center icon vertically */
+  justify-content: center; /* Center icon horizontally */
+  transition: 0.2s;    /* Smooth transition for hover effects */
+  flex-shrink: 0;     /* Prevent buttons from shrinking */
+}
+
+.control-button:hover {
+  background: rgba(255,255,255,0.1); /* Background on hover */
+  transform: scale(1.1); /* Scale up slightly on hover */
+}
+
+.control-button.play-pause {
+  width: 48px;        /* Larger width for play/pause button */
+  height: 48px;       /* Larger height for play/pause button */
+  background: var(--accent-gradient); /* Gradient background for play/pause */
+}
+
+.control-button.play-pause:hover {
+  transform: scale(1.15); /* Scale up more on hover for play/pause */
+  box-shadow: 0 0 12px rgba(79,70,229,0.4); /* Add shadow on hover */
+}
+
+/* Control Button Icon Style Override */
+.control-button .material-icons {
+  background: var(--icon-music-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: musicFlow 6s ease-in-out infinite; /* Keep animation */
+}
+
+.control-button:hover .material-icons {
+  transform: scale(1.1); /* Scale icon slightly on button hover */
+}
+
+
+/* ==========================================================================
+   Progress Bar (Shared Mini/Full)
+   ========================================================================== */
+
+.progress-container {
+  flex-grow: 2;       /* Allow progress container to expand */
+  position: relative;  /* Position relative to overlay hover area */
+  padding: 1rem 0;     /* Increased padding for touch target */
+  cursor: pointer;      /* Indicate container is interactive */
+  min-width: 200px;   /* Minimum width for progress bar */
+  max-width: 600px;   /* Maximum width for progress bar */
+  touch-action: none; /* Prevent default touch actions, improving responsiveness */
+}
+
+.progress-container:hover .progress-bar {
+  height: 6px;        /* Increase progress bar height on hover */
+}
+
+.progress-container:hover .progress-hover {
+  opacity: 1;          /* Show hover indicator on container hover */
+}
+
+/* Enhanced Progress Bar Styles */
+.progress-bar {
+  height: 12px;       /* Increased default height */
+  background: rgba(255,255,255,0.1); /* Background color for progress bar track */
+  border-radius: 6px;  /* Increased border radius */
+  overflow: hidden;     /* Clip progress indicator within bounds */
+  position: relative;  /* Position relative for progress indicator */
+  transition: height 0.2s ease; /* Smooth height transition on hover */
+}
+
+/* Active Progress Indicator Styles */
+.progress {
+  position: absolute; /* Position progress indicator inside progress bar */
+  left: 0;
+  top: 0;
+  height: 100%;      /* Fill progress bar height */
+  background: var(--accent-gradient); /* Gradient color for progress */
+  border-radius: inherit; /* Inherit border radius from progress bar */
+  transition: width 0.1s linear; /* Smooth width transition */
+}
+
+/* Enhanced Touch Area Styles */
+.progress-hover {
+  position: absolute; /* Overlay hover area */
+  left: 0;
+  top: -10px;        /* Extend touch area above */
+  height: calc(100% + 20px); /* Extend touch area below */
+  background: rgba(255,255,255,0.2); /* Visual feedback for touch area */
+  opacity: 0;          /* Initially hidden */
+  transition: 0.2s;    /* Smooth opacity transition */
+}
+
+/* Time Indicator Styles */
+.time-indicator {
+  display: flex;      /* Use flexbox for time layout */
+  justify-content: space-between; /* Space out current and total time */
+  color: var(--text-secondary); /* Time text color from root variables */
+  font-size: 0.85rem; /* Slightly larger font size for time */
+  margin-top: 0.5rem; /* Top margin above time indicator */
+  pointer-events: none; /* Prevent time indicator from interfering with progress bar clicks */
+}
+
+/* ==========================================================================
+   Volume Control (Shared Mini/Full - Hidden on Mobile)
+   ========================================================================== */
+
+.volume-control {
+  display: flex;      /* Use flexbox for volume controls layout */
+  align-items: center; /* Vertically align volume controls */
+  gap: 0.5rem;         /* Spacing between volume icon and slider */
+  border-left: 1px solid rgba(255,255,255,0.1); /* Separator line */
+  padding-left: 1rem; /* Left padding for volume control area */
+  flex-shrink: 0;     /* Prevent volume control from shrinking */
+}
+
+.volume-slider {
+  width: 80px;        /* Fixed width for volume slider */
+  -webkit-appearance: none; /* Remove default slider styling for WebKit browsers */
+  background: rgba(255,255,255,0.1); /* Background color for slider track */
+  height: 4px;        /* Slider track height */
+  border-radius: 2px; /* Rounded corners for slider track */
+  overflow: hidden;     /* Clip thumb to track bounds */
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Remove default thumb styling for WebKit browsers */
+  width: 12px;        /* Thumb width */
+  height: 12px;       /* Thumb height */
+  border-radius: 50%; /* Make thumb circular */
+  background: var(--primary-light); /* Thumb background color */
+  border: 2px solid var(--surface-color); /* Thumb border */
+  cursor: pointer;      /* Indicate slider is interactive */
+  box-shadow: -100px 0 0 98px var(--primary-light); /* Create filled track effect */
+}
+
+/* ==========================================================================
+   Lyrics Section (Full Player)
+   ========================================================================== */
+
+.lyrics-container {
+  width: 90%;
+  max-width: 90%;
+  flex: 1;
+  min-height: 100%;
+  background: linear-gradient(135deg, rgba(10, 10, 20, 0.95), rgba(40, 40, 60, 0.85));
+  backdrop-filter: blur(20px);
+  border-radius: 40px;
+  padding: 4rem; /* Note: Later rule sets padding: 1.5rem on mobile */
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  animation: backgroundFlow 8s ease-in-out infinite, subtleGlow 6s infinite alternate; /* Added subtleGlow based on later keyframe */
+  overflow-y: auto;
+  transition: opacity 0.5s ease; /* Added transition */
+}
+
+.lyrics-container.no-lyrics {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lyrics-line {
+  text-align: center;
+  padding: 0.3rem 2rem; /* Reduced vertical padding */ /* Note: Later rule sets padding: 1rem 1.5rem on mobile */
+  margin: 0; /* Ensure no extra margin */
+  font-size: 2rem; /* Larger font size for prominence */ /* Note: Later rule sets font-size: 1.5rem on mobile */
+  font-weight: 900; /* Extra bold for emphasis */
+  font-family: 'Poppins', sans-serif; /* Maintain modern typography */
+  color: #ffffff; /* Pure white for contrast */
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    #a0a0ff,
+    #ff80bf
+  ); /* Subtle, Apple-inspired gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 3px 10px rgba(255, 255, 255, 0.3), /* Soft white glow */
+    0 0 20px rgba(160, 160, 255, 0.2); /* Slight blue tint */
+  transition: all 0.5s ease; /* Smoother transition */
+  line-height: 1.5; /* Adjusted line height */ /* Note: Later rule sets line-height: 2 on mobile */
+  position: relative;
+  z-index: 1; /* Ensure text is above background effects */
+}
+
+.lyrics-line:hover {
+  transform: translateY(-8px) scale(1.05); /* Subtle lift and scale */
+  background: linear-gradient(
+    90deg,
+    #ff80bf,
+    #a0a0ff,
+    #80d4ff
+  ); /* Dynamic hover gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 5px 15px rgba(255, 128, 191, 0.5), /* Pinkish glow */
+    0 0 25px rgba(160, 160, 255, 0.4); /* Enhanced blue glow */
+}
+
+/* Optional: Add a subtle overlay for depth */
+.lyrics-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 70%
+  ); /* Soft radial glow */
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+/* ==========================================================================
+   Artist Info/Overview (Full Player)
+   ========================================================================== */
+
+/* Enhanced Artist Info Styles (First block - potentially partial) */
+.artist-info-container {
+  width: 100%;       /* Artist info container width */
+  max-width: 600px;   /* Maximum artist info container width */
+  background: rgba(30,41,59,0.4); /* Semi-transparent background */
+  backdrop-filter: blur(10px); /* Apply blur to background */
+  border-radius: 20px; /* Rounded corners for artist info container */
+  padding: 2rem;         /* Padding inside artist info container */
+  display: flex;      /* Use flexbox for layout */
+  gap: 2rem;         /* Spacing between artist image and details */
+  align-items: flex-start; /* Align items to the start vertically */
+  margin-top: 2rem;    /* Top margin above artist info container */
+}
+
+.artist-image {
+  width: 120px;       /* Fixed width for artist image */
+  height: 120px;      /* Fixed height for artist image */
+  border-radius: 60px; /* Make image circular */
+  object-fit: cover;    /* Ensure image covers the area */
+}
+
+.artist-details {
+  flex: 1;          /* Details section takes remaining space */
+}
+
+.artist-name {
+  font-size: 1.5rem;   /* Artist name font size */
+  font-weight: 600;    /* Bold artist name */
+  margin-bottom: 1rem;  /* Spacing below artist name */
+}
+
+.artist-year,
+.artist-genre {
+  font-size: 1rem;     /* Artist year and genre font size */
+  color: var(--text-secondary); /* Color from root variables */
+  line-height: 1.6;     /* Line height for readability */
+}
+
+/* Artist Overview Container Styles (Second, more detailed block) */
+.artist-overview-container {
+  width: 100%;       /* Artist overview container width */
+  max-width: 600px;   /* Maximum width */
+  background: rgba(30,41,59,0.4); /* Semi-transparent background */
+  backdrop-filter: blur(10px); /* Apply blur to background */
+  border-radius: 20px; /* Rounded corners */
+  padding: 2rem;         /* Padding inside */
+  margin-top: 2rem;    /* Top margin */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Shadow */
+}
+
+.artist-overview-header h3 {
+  font-size: 1.5rem;   /* Header font size */
+  font-weight: 600;    /* Bold header text */
+  margin-bottom: 1.5rem; /* Bottom margin */
+  color: var(--text-primary); /* Text color from root variables */
+}
+
+.artist-description {
+  margin-bottom: 2rem;  /* Bottom margin */
+}
+
+.artist-description h4 {
+  font-size: 1.1rem;   /* Subheader font size */
+  font-weight: 500;    /* Semi-bold subheader text */
+  margin-bottom: 0.75rem; /* Bottom margin */
+  color: var(--text-primary); /* Text color from root variables */
+}
+
+.artist-description p {
+  color: var(--text-secondary); /* Description text color from root variables */
+  line-height: 1.6;     /* Line height for readability */
+}
+
+/* Artist Stats (within Overview) */
+.artist-stats { /* Defined multiple times, this is within Overview */
+  display: grid;                 /* Grid layout for stats */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
+  gap: 1rem;                     /* Spacing between stats cards */
+  margin-bottom: 2rem;            /* Bottom margin */
+}
+
+.stat-card { /* Defined multiple times, this is within Overview */
+  background: var(--card-color); /* Card background color from root variables */
+  padding: 1.5rem;       /* Padding inside stat card */
+  border-radius: 12px; /* Rounded corners */
+  text-align: center;   /* Center text in stat card */
+  transition: transform 0.3s ease; /* Smooth transform on hover */
+}
+
+.stat-card:hover { /* Defined multiple times, this is within Overview */
+  transform: translateY(-5px); /* Slight lift on hover */
+}
+
+.stat-card .material-icons { /* Defined multiple times, this is within Overview */
+  font-size: 2rem;     /* Icon size in stat card */
+  color: var(--primary-light); /* Icon color */
+  margin-bottom: 0.5rem; /* Bottom margin */
+  /* Re-apply gradient (from later icon rule) */
+  background: var(--icon-music-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-value { /* Defined multiple times, this is within Overview */
+  font-size: 1.25rem;  /* Stat value font size */
+  font-weight: 600;    /* Bold stat value */
+  color: var(--text-primary); /* Text color from root variables */
+  margin-bottom: 0.25rem; /* Bottom margin */
+}
+
+.stat-label { /* Defined multiple times, this is within Overview */
+  font-size: 0.9rem;   /* Stat label font size */
+  color: var(--text-secondary); /* Label text color from root variables */
+}
+
+/* Artist Top Songs (within Overview) */
+.artist-top-songs {
+  margin-bottom: 2rem;  /* Bottom margin */
+}
+
+.artist-top-songs h4 {
+  font-size: 1.1rem;   /* Subheader font size */
+  font-weight: 500;    /* Semi-bold subheader text */
+  margin-bottom: 1rem;  /* Bottom margin */
+  color: var(--text-primary); /* Text color from root variables */
+}
+
+.top-songs-list {
+  display: flex;      /* Flex layout for top songs list */
+  flex-direction: column; /* Stack songs vertically */
+  gap: 0.75rem;      /* Spacing between song items */
+}
+
+.top-song-item {
+  display: flex;      /* Flex layout for song item */
+  align-items: center; /* Vertically align song item content */
+  padding: 0.75rem;    /* Padding inside song item */
+  background: var(--card-color); /* Background color from root variables */
+  border-radius: 12px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth background color transition on hover */
+  cursor: pointer;      /* Indicate item is clickable */
+}
+
+.top-song-item:hover {
+  background: rgba(51,65,85,0.8); /* Darker background on hover */
+}
+
+.song-number {
+  font-size: 1.25rem;  /* Song number font size */
+  font-weight: 700;    /* Bold song number */
+  color: var(--text-secondary); /* Number color from root variables */
+  width: 2.5rem;       /* Fixed width for song number */
+  text-align: center;   /* Center align song number */
+}
+
+/* Reusing .song-info within Top Songs List */
+.top-song-item .song-info {
+  flex: 1;          /* Info section takes remaining space */
+  margin-left: 1rem;  /* Left margin for info section */
+  /* Overrides the earlier padding definition if present */
+  padding: 0; /* Remove padding if it was inherited */
+}
+
+.top-song-item .song-title { /* Reusing .song-title for top song items */
+  font-weight: 500;    /* Adjusted font weight for top song title */
+  color: var(--text-primary); /* Text color from root variables */
+  margin-bottom: 0.25rem; /* Bottom margin */
+  /* Ensure consistent behavior with base .song-title */
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-plays {
+  font-size: 0.85rem;  /* Plays count font size */
+  color: var(--text-secondary); /* Plays count color from root variables */
+}
+
+/* Artist Links (within Overview) */
+.artist-links {
+  display: flex;      /* Flex layout for artist links */
+  gap: 1rem;         /* Spacing between links */
+  flex-wrap: wrap;    /* Wrap links on smaller screens */
+}
+
+.artist-link {
+  display: flex;      /* Flex layout for individual link */
+  align-items: center; /* Vertically align link content */
+  gap: 0.5rem;         /* Spacing between icon and text */
+  padding: 0.75rem 1.25rem; /* Padding inside link */
+  background: var(--card-color); /* Background color from root variables */
+  border-radius: 12px; /* Rounded corners */
+  color: var(--text-primary); /* Text color from root variables */
+  text-decoration: none; /* Remove underline from links */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.artist-link:hover {
+  background: rgba(51,65,85,0.8); /* Darker background on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.artist-link .material-icons {
+  font-size: 1.25rem;  /* Icon size in artist link */
+  /* Ensure gradient is applied */
+  background: var(--icon-music-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================================
+   Integration Modal (Full Player Sub-View)
+   ========================================================================== */
+
+.integration-container {
+  position: absolute; /* Position over full player content */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--background-color); /* Match background color */
+  z-index: 10;        /* Ensure it's above other content in full player */
+  padding: 2rem;         /* Padding inside integration container */
+  overflow-y: auto;   /* Allow vertical scrolling if content is long */
+}
+
+.integration-header {
+  display: flex;      /* Use flexbox for header layout */
+  justify-content: space-between; /* Space out header items */
+  align-items: center; /* Vertically align header items */
+  margin-bottom: 2rem;  /* Bottom margin below header */
+}
+
+.close-button { /* Defined multiple times, this is for Integration */
+  background: none;    /* No background color */
+  border: none;        /* Remove border */
+  color: var(--text-secondary); /* Icon color from root variables */
+  cursor: pointer;      /* Indicate button is clickable */
+  padding: 0.5rem;     /* Padding around close button */
+  border-radius: 50%; /* Make button circular */
+  transition: all 0.3s; /* Smooth transition for hover effects */
+  /* Note: Later definitions might override font-size etc. */
+}
+
+.close-button:hover { /* Defined multiple times, this is for Integration */
+  background: rgba(255,255,255,0.1); /* Background on hover */
+  color: var(--text-primary); /* Icon color on hover */
+}
+
+.integration-options {
+  display: flex;      /* Use flexbox for options layout */
+  flex-direction: column; /* Stack options vertically */
+  gap: 2rem;         /* Spacing between option sections */
+}
+
+.size-buttons, .theme-buttons {
+  display: flex;      /* Use flexbox for buttons layout */
+  gap: 1rem;         /* Spacing between buttons */
+  margin-top: 0.5rem; /* Top margin above buttons */
+}
+
+.size-btn, .theme-btn {
+  padding: 0.5rem 1rem; /* Padding inside buttons */
+  border-radius: 8px; /* Rounded corners for buttons */
+  border: 1px solid rgba(255,255,255,0.1); /* Light border */
+  background: var(--surface-color); /* Background color from root variables */
+  color: var(--text-primary); /* Text color from root variables */
+  cursor: pointer;      /* Indicate button is clickable */
+  transition: all 0.3s; /* Smooth transition for hover effects */
+  display: flex;      /* Use flexbox for button content */
+  align-items: center; /* Vertically align button content */
+  gap: 0.5rem;         /* Spacing between button content items */
+}
+
+.size-btn:hover, .theme-btn:hover {
+  background: var(--card-color); /* Background on hover */
+}
+
+.size-btn.active, .theme-btn.active {
+  border-color: var(--primary-light); /* Highlight border when active */
+  background: rgba(79,70,229,0.2); /* Highlight background when active */
+}
+
+.theme-color {
+  width: 16px;        /* Fixed width for theme color indicator */
+  height: 16px;       /* Fixed height for theme color indicator */
+  border-radius: 4px; /* Rounded corners for theme color indicator */
+}
+
+.theme-color.default {
+  background: linear-gradient(135deg, #1e293b, #0f172a); /* Default theme gradient */
+}
+
+.theme-color.purple {
+  background: linear-gradient(135deg, #4c1d95, #2e1065); /* Purple theme gradient */
+}
+
+.theme-color.blue {
+  background: linear-gradient(135deg, #1e40af, #1e3a8a); /* Blue theme gradient */
+}
+
+.theme-color.dark {
+  background: linear-gradient(135deg, #18181b, #09090b); /* Dark theme gradient */
+}
+
+.preview-container {
+  margin-top: 0.5rem; /* Top margin above preview container */
+  border-radius: 12px; /* Rounded corners for preview container */
+  overflow: hidden;     /* Clip iframe to rounded corners */
+  background: var(--surface-color); /* Background color from root variables */
+  padding: 1rem;         /* Padding inside preview container */
+}
+
+.preview-container iframe {
+  width: 100%;       /* Iframe takes full width of container */
+  border-radius: 8px; /* Rounded corners for iframe */
+}
+
+.code-container {
+  position: relative;  /* Position relative to contain copy button */
+  margin-top: 0.5rem; /* Top margin above code container */
+}
+
+.code-block {
+  background: var(--surface-color); /* Background color from root variables */
+  padding: 1rem;         /* Padding inside code block */
+  border-radius: 8px; /* Rounded corners for code block */
+  font-family: monospace; /* Monospace font for code */
+  white-space: pre-wrap; /* Allow line breaks in code */
+  word-break: break-all; /* Break long words */
+  color: var(--text-primary); /* Text color from root variables */
+  font-size: 0.9rem;   /* Code font size */
+  max-height: 200px;   /* Maximum height for code block */
+  overflow-y: auto;   /* Allow vertical scrolling in code block */
+}
+
+.copy-btn {
+  position: absolute; /* Position copy button in code container */
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(255,255,255,0.1); /* Background color */
+  border: none;        /* Remove border */
+  color: var(--text-secondary); /* Icon color from root variables */
+  padding: 0.5rem;     /* Padding around copy button */
+  border-radius: 50%; /* Make button circular */
+  cursor: pointer;      /* Indicate button is clickable */
+  transition: all 0.3s; /* Smooth transition for hover effects */
+}
+
+.copy-btn:hover {
+  background: rgba(255,255,255,0.2); /* Background on hover */
+  color: var(--text-primary); /* Icon color on hover */
+}
+
+
+/* ==========================================================================
+   Insights Modal
+   ========================================================================== */
+
+.insights-modal {
+  display: none;        /* Initially hidden */
+  position: fixed;      /* Fixed position covering the viewport */
+  inset: 0;           /* Cover all sides */
+  background: var(--background-color); /* Background color from root variables */
+  z-index: 1000;      /* Ensure it's on top of everything */
+  overflow-y: auto;   /* Allow vertical scrolling if content is long */
+}
+
+.insights-content {
+  max-width: 1200px;  /* Maximum width for insights content */
+  margin: 0 auto;    /* Center content horizontally */
+  padding: 2rem;         /* Padding inside insights content */
+}
+
+.insights-header {
+  display: flex;      /* Flex layout for header */
+  justify-content: space-between; /* Space out header items */
+  align-items: center; /* Vertically align header items */
+  margin-bottom: 2rem;  /* Bottom margin */
+}
+
+.insights-header h2 {
+  font-size: 1.8rem;   /* Header title font size */
+  font-weight: 600;    /* Bold header title */
+  background: var(--accent-gradient); /* Gradient background for text */
+  -webkit-background-clip: text; /* Clip background to text shape (WebKit browsers) */
+  -webkit-text-fill-color: transparent; /* Make text transparent to show background */
+}
+
+.insight-section {
+  background: var(--surface-color); /* Section background color from root variables */
+  border-radius: 16px; /* Rounded corners */
+  padding: 1.5rem;       /* Padding inside insight section */
+  margin-bottom: 2rem;  /* Bottom margin */
+}
+
+.insight-section h3 {
+  font-size: 1.4rem;   /* Section title font size */
+  margin-bottom: 1.5rem; /* Bottom margin */
+  color: var(--text-primary); /* Text color from root variables */
+}
+
+/* Stats Grid Styles (Insights Modal) */
+.insights-modal .stats-grid { /* Targeting stats-grid inside insights modal */
+  display: grid;                 /* Grid layout */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive columns */
+  gap: 1rem;                     /* Spacing between grid items */
+}
+
+/* Stat Card Styles (Insights Modal) */
+.insights-modal .stat-card { /* Targeting stat-card inside insights modal */
+  background: var(--card-color); /* Card background color from root variables */
+  padding: 1.5rem;       /* Padding inside stat card */
+  border-radius: 12px; /* Rounded corners */
+  text-align: center;   /* Center text */
+  transition: transform 0.3s ease; /* Smooth transform on hover */
+}
+
+.insights-modal .stat-card:hover { /* Hover effect for stat-card in insights modal */
+  transform: translateY(-5px); /* Slight lift on hover */
+}
+
+.insights-modal .stat-card .material-icons { /* Icon styles in stat-card of insights modal */
+  font-size: 2rem;     /* Icon size */
+  color: var(--primary-light); /* Icon color */
+  margin-bottom: 0.5rem; /* Bottom margin */
+  /* Ensure gradient icon style */
+  background: var(--icon-music-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.insights-modal .stat-card .stat-value { /* Stat value styles in insights modal */
+  font-size: 1.8rem;   /* Value font size */
+  font-weight: 600;    /* Bold value text */
+  margin-bottom: 0.25rem; /* Bottom margin */
+  color: var(--text-primary); /* Need to explicitly set color here */
+}
+
+.insights-modal .stat-card .stat-label { /* Stat label styles in insights modal */
+  color: var(--text-secondary); /* Label text color from root variables */
+  font-size: 0.9rem;   /* Label font size */
+}
+
+/* Top Artists List Styles (Insights Modal) */
+.top-artists-list {
+  display: grid;                 /* Grid layout */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive columns */
+  gap: 1rem;                     /* Spacing between artist cards */
+}
+
+.artist-card {
+  background: var(--card-color); /* Card background color from root variables */
+  padding: 1rem;         /* Padding inside artist card */
+  border-radius: 12px; /* Rounded corners */
+  display: flex;      /* Flex layout for artist card */
+  align-items: center; /* Vertically align content */
+  gap: 1rem;         /* Spacing between artist rank and info */
+}
+
+.artist-rank {
+  font-size: 1.5rem;   /* Rank font size */
+  font-weight: 700;    /* Bold rank text */
+  color: var(--primary-light); /* Rank color */
+  width: 2rem;         /* Fixed width for rank number */
+  text-align: center;   /* Center align rank number */
+}
+
+/* Reusing .artist-info within Artist Card (Insights) */
+.artist-card .artist-info {
+  flex: 1;          /* Info section takes remaining space */
+  min-width: 0;       /* Prevent content overflow */
+  /* Reset padding/margin if inherited */
+}
+
+/* Reusing .artist-name within Artist Card (Insights) */
+.artist-card .artist-name { /* Artist name styles in artist card */
+  font-weight: 600;    /* Bold artist name */
+  margin-bottom: 0.25rem; /* Bottom margin */
+  white-space: nowrap;  /* Prevent text wrapping */
+  overflow: hidden;     /* Hide overflow text */
+  text-overflow: ellipsis; /* Show ellipsis for overflow text */
+  /* Ensure consistent styles */
+  font-size: 1rem; /* Match base .artist-name font-size if needed */
+  color: var(--text-primary);
+}
+
+/* Reusing .artist-stats within Artist Card (Insights) */
+.artist-card .artist-stats { /* This is for the text below name, not the grid */
+  color: var(--text-secondary); /* Stats text color from root variables */
+  font-size: 0.9rem;   /* Stats font size */
+  /* Reset grid styles if they were inherited somehow */
+  display: block;
+  grid-template-columns: none;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+/* Patterns Container Styles (Insights Modal) */
+.patterns-container {
+  display: grid;                 /* Grid layout */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+  gap: 2rem;                     /* Spacing between chart containers */
+}
+
+.pattern-chart {
+  background: var(--card-color); /* Chart background color from root variables */
+  padding: 1rem;         /* Padding inside chart container */
+  border-radius: 12px; /* Rounded corners */
+  min-height: 200px;   /* Minimum height for chart container */
+}
+
+.pattern-chart h4 {
+  text-align: center;   /* Center chart title text */
+  margin-bottom: 1rem;  /* Bottom margin */
+  color: var(--text-secondary); /* Title text color from root variables */
+}
+
+/* Recent Activity List Styles (Insights Modal) */
+.recent-activity-list {
+  display: flex;      /* Flex layout for activity list */
+  flex-direction: column; /* Stack activity items vertically */
+  gap: 0.75rem;      /* Spacing between activity items */
+}
+
+.activity-item {
+  background: var(--card-color); /* Item background color from root variables */
+  padding: 1rem;         /* Padding inside activity item */
+  border-radius: 12px; /* Rounded corners */
+  display: flex;      /* Flex layout for activity item */
+  align-items: center; /* Vertically align content */
+  gap: 1rem;         /* Spacing between activity time and info */
+}
+
+.activity-time {
+  font-size: 0.9rem;   /* Time font size */
+  color: var(--text-secondary); /* Time text color from root variables */
+  white-space: nowrap;  /* Prevent text wrapping */
+}
+
+/* Reusing .activity-info within Activity Item (Insights) */
+.activity-item .activity-info {
+  flex: 1;          /* Info section takes remaining space */
+  min-width: 0;       /* Prevent content overflow */
+}
+
+.activity-item .activity-title { /* Activity title styles */
+  font-weight: 500;    /* Semi-bold title text */
+  margin-bottom: 0.25rem; /* Bottom margin */
+  white-space: nowrap;  /* Prevent text wrapping */
+  overflow: hidden;     /* Hide overflow text */
+  text-overflow: ellipsis; /* Show ellipsis for overflow text */
+  color: var(--text-primary); /* Ensure text color */
+}
+
+.activity-artist { /* Defined within Activity Item */
+  color: var(--text-secondary); /* Artist text color from root variables */
+  font-size: 0.9rem;   /* Artist font size */
+}
+
+/* Completion Bar (Insights Modal) */
+.activity-completion {
+  background: rgba(255, 255, 255, 0.1); /* Background for completion bar track */
+  height: 4px;        /* Height of completion bar track */
+  width: 100px;      /* Fixed width for completion bar track */
+  border-radius: 2px; /* Rounded corners */
+  overflow: hidden;     /* Clip completion bar within bounds */
+}
+
+.completion-bar {
+  height: 100%;      /* Fill completion bar track height */
+  background: var(--accent-gradient); /* Completion bar color gradient */
+  transition: width 0.3s ease; /* Smooth width transition */
+}
+
+/* Completion Stats Section (Insights Modal) */
+.completion-stats {
+  display: grid;                 /* Grid layout */
+  grid-template-columns: 2fr 1fr; /* Two column layout (chart and summary) */
+  gap: 2rem;                     /* Spacing between chart and summary */
+  align-items: center; /* Vertically align chart and summary */
+}
+
+.completion-chart {
+  background: var(--card-color); /* Chart background color from root variables */
+  padding: 1rem;         /* Padding inside chart container */
+  border-radius: 12px; /* Rounded corners */
+  height: 300px;      /* Fixed height for completion chart */
+}
+
+.completion-summary {
+  display: flex;      /* Flex layout for summary section */
+  flex-direction: column; /* Stack summary elements vertically */
+  gap: 1rem;         /* Spacing between summary elements */
+}
+
+.completion-rate {
+  background: var(--card-color); /* Rate card background color from root variables */
+  padding: 1.5rem;       /* Padding inside rate card */
+  border-radius: 12px; /* Rounded corners */
+  text-align: center;   /* Center text in rate card */
+}
+
+.completion-rate span {
+  font-size: 2.5rem;   /* Rate value font size */
+  font-weight: 700;    /* Bold rate value */
+  background: var(--accent-gradient); /* Gradient background for text */
+  -webkit-background-clip: text; /* Clip background to text shape (WebKit browsers) */
+  -webkit-text-fill-color: transparent; /* Make text transparent to show background */
+  display: block;      /* Make span a block element */
+  margin-bottom: 0.5rem; /* Bottom margin */
+}
+
+.completion-rate label {
+  color: var(--text-secondary); /* Label text color from root variables */
+  font-size: 0.9rem;   /* Label font size */
+}
+
+
+/* ==========================================================================
+   History Modal
+   ========================================================================== */
+
+/* Base modal styles (redefined multiple times, using latest) */
+.modal {
+  display: none; /* Hidden by default, toggle with JS */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  overflow: auto;
+  /* Older background definition (likely overridden) */
+  /* background: rgba(15, 23, 42, 0.9); */
+}
+
+.modal-content { /* Redefined multiple times, using latest */
+  background-color: #b24697; /* Latest definition uses white */
+  margin: 10% auto; /* Centered vertically and horizontally */
+  padding: 20px;
+  border-radius: 8px; /* Latest uses 8px */
+  width: 80%;
+  max-width: 600px; /* Responsive max width */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  position: relative;
+  /* Older definitions: */
+  /* background: var(--background-color); */
+  /* border-radius: 16px; */
+  /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); */
+  /* max-width: 800px; */
+  /* margin: 2rem auto; */
+}
+
+.modal-header { /* Redefined multiple times, using latest */
+  margin-bottom: 15px; /* Latest definition just adds margin */
+  /* Older definitions: */
+  /* display: flex; */
+  /* justify-content: space-between; */
+  /* align-items: center; */
+  /* padding: 1.5rem; */
+  /* border-bottom: 1px solid rgba(255, 255, 255, 0.1); */
+}
+
+/* Close button (redefined multiple times, using latest) */
+.close-button { /* Note: this applies to ALL modals using this class */
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px; /* Latest adds font-size */
+  cursor: pointer;
+  /* Older definitions (some might be overridden) */
+  /* background: none; */
+  /* border: none; */
+  /* color: var(--text-secondary); */
+  /* padding: 0.5rem; */
+  /* border-radius: 50%; */
+  /* transition: all 0.3s; */
+}
+/* The :hover state from the Integration modal might still apply */
+.close-button:hover {
+  /* background: rgba(255,255,255,0.1); */ /* From Integration */
+  /* color: var(--text-primary); */ /* From Integration */
+  /* Color might be overridden by playlist modal styles if applicable */
+}
+
+/* History Specific Styles */
+.history-list {
+  padding: 1rem;         /* Padding inside history list */
+  margin-top: 0; /* Reset margin if inherited from #playlistList */
+}
+
+.history-item {
+  display: flex;      /* Flex layout for history item */
+  align-items: center; /* Vertically align content */
+  padding: 1rem;         /* Padding inside history item */
+  border-radius: 12px; /* Rounded corners */
+  margin-bottom: 1rem;  /* Bottom margin */
+  background: var(--surface-color); /* Background color from root variables */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  cursor: pointer;      /* Indicate item is clickable */
+  border-bottom: none; /* Override border from .playlist-item if shared */
+}
+
+.history-item:hover {
+  background: var(--card-color); /* Background on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.history-thumbnail {
+  width: 60px;        /* Fixed width for thumbnail */
+  height: 60px;       /* Fixed height for thumbnail */
+  border-radius: 8px; /* Rounded corners */
+  margin-right: 1rem;  /* Right margin */
+  object-fit: cover;    /* Ensure image covers area */
+}
+
+/* Reusing .history-info for consistency */
+.history-info {
+  flex: 1;          /* Info section takes remaining space */
+  min-width: 0;       /* Prevent content overflow */
+  /* Reset flex-direction if inherited from .playlist-info */
+  flex-direction: unset;
+}
+
+.history-item .history-title { /* Using unique class to avoid conflict */
+  font-weight: 600;    /* Bold title text */
+  margin-bottom: 0.25rem; /* Bottom margin */
+  white-space: nowrap;  /* Prevent text wrapping */
+  overflow: hidden;     /* Hide overflow text */
+  text-overflow: ellipsis; /* Show ellipsis for overflow text */
+  color: var(--text-primary); /* Ensure color */
+}
+
+.history-artist {
+  color: var(--text-secondary); /* Artist text color from root variables */
+  font-size: 0.9rem;   /* Artist font size */
+}
+
+.history-time {
+  color: var(--text-secondary); /* Time text color from root variables */
+  font-size: 0.8rem;   /* Time font size */
+  margin-top: 0.25rem; /* Top margin */
+}
+
+.history-play {
+  width: 40px;        /* Fixed width for play button */
+  height: 40px;       /* Fixed height for play button */
+  border-radius: 50%; /* Make button circular */
+  background: var(--accent-gradient); /* Gradient background for play button */
+  display: flex;      /* Flex layout to center icon */
+  align-items: center; /* Center icon vertically */
+  justify-content: center; /* Center icon horizontally */
+  margin-left: 1rem;  /* Left margin */
+  opacity: 0;          /* Initially hidden */
+  transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.history-item:hover .history-play { /* Show play button on history item hover */
+  opacity: 1;          /* Make play button visible on hover */
+}
+
+
+/* ==========================================================================
+   Playlist Modal / Management
+   ========================================================================== */
+
+/* New Playlist Modal Specific Styles (First block related to playlists) */
+.new-playlist-modal {
+  /* Override global variables for a unique theme */
+  --surface-color: rgba(30, 30, 30, 0.8); /* Darker surface */
+  --card-color: rgba(40, 40, 40, 0.9);    /* Darker card background */
+  --accent-color: #ff4081;                /* New accent: pink */
+  --playlist-accent-gradient: linear-gradient(45deg, #ff4081, #ff79b0); /* Gradient for buttons/header */
+}
+
+/* Enhanced modal content for new playlist */
+.new-playlist-modal .modal-content {
+  padding: 2rem; /* Overrides generic padding */
+  background: var(--surface-color); /* Use themed surface */
+  /* Resets generic styles potentially applied by later rules */
+  margin: 10% auto;
+  max-width: 600px;
+  width: 90%;
+  border-radius: 16px;
+}
+
+/* Styled modal header with gradient */
+.new-playlist-modal .modal-header {
+  background: var(--playlist-accent-gradient);
+  color: #fff;
+  padding: 1.5rem;
+  border-top-left-radius: 16px; /* Match content radius */
+  border-top-right-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0; /* Override generic margin */
+}
+
+.new-playlist-modal .close-button {
+  color: #fff; /* Override generic/integration color */
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* Reset integration styles */
+  padding: 0;
+  border-radius: 0;
+  position: static; /* Override absolute */
+}
+
+.new-playlist-modal .close-button:hover {
+  color: #eee;
+  background: none; /* Override integration hover */
+}
+
+/* Playlist list within new playlist modal */
+.new-playlist-modal .playlist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-top: 1rem;
+  padding: 0; /* Reset generic padding */
+}
+
+/* Playlist item design within new playlist modal */
+.new-playlist-modal .playlist-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: var(--card-color); /* Use themed card color */
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Reset generic playlist item styles */
+  justify-content: flex-start;
+  border-bottom: none;
+  cursor: default; /* Or pointer if clickable */
+  margin-bottom: 0;
+}
+
+.new-playlist-modal .playlist-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  background: var(--card-color); /* Maintain background on hover */
+}
+
+.new-playlist-modal .playlist-icon {
+  font-size: 24px;
+  margin-right: 1rem;
+  color: var(--text-secondary, #b0b0b0); /* Fallback if not defined */
+}
+
+.new-playlist-modal .playlist-name {
+  font-size: 1.2rem;
+  font-weight: 700; /* Bolder than generic */
+  color: var(--text-primary, #fff); /* Fallback if not defined */
+}
+
+.new-playlist-modal .song-count {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #b0b0b0);
+}
+
+/* Song item design within new playlist modal */
+.new-playlist-modal .song-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--surface-color); /* Use themed surface */
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  /* Reset generic playlist song styles */
+  border-bottom: none;
+}
+
+.new-playlist-modal .song-item:hover {
+  background-color: var(--card-color); /* Use themed card */
+}
+
+.new-playlist-modal .song-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary); /* Ensure color */
+}
+
+.new-playlist-modal .song-artist {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #b0b0b0);
+}
+
+/* Control buttons within new playlist modal */
+.new-playlist-modal .control-btn {
+  color: var(--text-secondary, #b0b0b0);
+  transition: color 0.3s ease, background-color 0.3s ease;
+  /* Reset generic control button styles */
+  background: none;
+  border: none;
+  padding: 5px; /* Match generic */
+}
+
+.new-playlist-modal .control-btn:hover,
+.new-playlist-modal .control-btn.active {
+  color: var(--accent-color); /* Use themed accent */
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle background */
+}
+
+/* Create playlist button (specific to new playlist modal) */
+.new-playlist-modal .glass-button {
+  background: var(--playlist-accent-gradient);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-top: 1rem;
+}
+
+.new-playlist-modal .glass-button:hover {
+  transform: scale(1.05);
+}
+
+/* Create Playlist Section (Appears related to both sets of playlist styles) */
+/* Using the LATEST definitions found */
+#createPlaylistSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+#newPlaylistName {
+  flex: 1; /* Takes up available space */
+  padding: 8px; /* Latest padding */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  /* Older styles */
+  /* padding: 5px; */
+  /* width: 200px; */
+  /* margin-right: 10px; */
+}
+
+#submitPlaylistBtn {
+  padding: 8px 12px; /* Latest padding */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: #4CAF50; /* Green for submit */
+  color: white;
+  /* Older styles */
+  /* padding: 5px 10px; */
+}
+
+#submitPlaylistBtn:hover {
+  background-color: #45a049; /* Darker green on hover */
+  /* Older styles */
+  /* opacity: 0.9; */
+}
+
+#cancelPlaylistBtn {
+  padding: 8px 12px; /* Latest padding */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: #f44336; /* Red for cancel */
+  color: white;
+  /* Older styles */
+  /* padding: 5px 10px; */
+  /* margin-left: 5px; */
+}
+
+#cancelPlaylistBtn:hover {
+  background-color: #da190b; /* Darker red on hover */
+   /* Older styles */
+  /* opacity: 0.9; */
+}
+
+/* Generic Playlist Management Styles (Last block of playlist styles) */
+/* These apply AFTER .new-playlist-modal styles and may affect them if specificity is lower */
+#playlistList { /* Assumed target for generic list */
+  margin-top: 20px;
+  padding: 0; /* Reset padding */
+}
+
+.playlist-item { /* Generic playlist item - LATEST definition */
+  display: flex;
+  justify-content: space-between; /* Different from new-playlist */
+  align-items: center;
+  padding: 10px; /* Different from new-playlist */
+  border-bottom: 1px solid #eee; /* Adds border */
+  cursor: pointer; /* Adds pointer */
+  transition: background-color 0.2s; /* Different transition */
+  /* Reset some new-playlist styles */
+  background-color: transparent; /* Or inherit? */
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.playlist-item:hover { /* Generic hover - LATEST definition */
+  background-color: #f5f5f5; /* Light grey hover */
+  /* Reset new-playlist hover */
+  transform: none;
+  box-shadow: none;
+}
+
+.playlist-info { /* Generic info container */
+  display: flex;
+  flex-direction: column; /* Stacks name/count */
+}
+
+.playlist-name { /* Generic name style */
+  font-weight: bold; /* Less bold than new-playlist */
+  font-size: 1rem; /* Implicitly smaller */
+  color: inherit; /* Or #000? */
+}
+
+.song-count { /* Generic count style */
+  font-size: 0.9em;
+  color: #666; /* Muted text color */
+}
+
+.playlist-controls { /* Generic controls container */
+  display: flex;
+  gap: 10px; /* Spacing between control buttons */
+}
+
+.control-btn { /* Generic control button - LATEST definition */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px; /* Different from new-playlist */
+  transition: color 0.2s; /* Different transition */
+  color: inherit; /* Or #000? */
+}
+
+.control-btn:hover { /* Generic hover - LATEST definition */
+  color: #007bff; /* Blue on hover */
+  background: none; /* Reset new-playlist hover */
+}
+
+/* Playlist Songs View (Generic) */
+.pl-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.pl-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.pl-song-item {
+  display: flex;
+  align-items: center;
+  padding: 10px; /* Different from new-playlist song item */
+  border-bottom: 1px solid #eee; /* Adds border */
+  /* Reset new-playlist song item styles */
+  background-color: transparent; /* Or inherit? */
+  border-radius: 0;
+}
+.pl-song-item:hover {
+   background-color: #f5f5f5; /* Match generic item hover */
+}
+
+.pl-song-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover; /* Ensures image fills space nicely */
+  margin-right: 10px;
+}
+
+.pl-song-info {
+  flex: 1;
+}
+
+.pl-song-title {
+  font-weight: bold; /* Different from new-playlist song title */
+  font-size: 1rem; /* Implicitly same */
+  color: inherit; /* Or #000? */
+}
+
+.pl-song-artist {
+  font-size: 0.9em; /* Slightly different from new-playlist */
+  color: #666; /* Muted text */
+}
+
+.pl-control-btn { /* Controls within song view */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s;
+}
+
+.pl-control-btn:hover {
+  color: #007bff; /* Blue on hover */
+}
+
+/* Miscellaneous Generic Playlist Styles */
+#modalHeader { /* Used in generic playlist context */
+  margin-bottom: 15px;
+}
+
+#createPlaylistBtn { /* Generic create button */
+  background-color: #007bff; /* Blue */
+  color: white;
+  padding: 10px 15px; /* Different from glass-button */
+  border: none;
+  border-radius: 4px; /* Different from glass-button */
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#createPlaylistBtn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* ==========================================================================
+   Session / Warning Popups
+   ========================================================================== */
+
+/* Session Popup Styles */
+.session-popup {
+  position: fixed;      /* Fixed position in viewport */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center popup */
+  background: var(--surface-color); /* Background color from root variables */
+  padding: 2rem;         /* Padding inside popup */
+  border-radius: 16px; /* Rounded corners */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4); /* Shadow */
+  z-index: 9999;      /* Ensure it's on top of everything */
+  text-align: center;   /* Center text in popup */
+  max-width: 400px;   /* Maximum width for popup */
+  width: 90%;        /* Responsive width */
+  animation: popupIn 0.3s ease; /* Slide in animation */
+  border: 1px solid rgba(255,255,255,0.1); /* Light border */
+}
+
+.session-popup-overlay {
+  position: fixed;      /* Fixed overlay covering viewport */
+  inset: 0;           /* Cover all sides */
+  background: rgba(0,0,0,0.8); /* Dark semi-transparent background */
+  backdrop-filter: blur(8px); /* Apply blur to background */
+  z-index: 9998;      /* Ensure it's behind popup but above other content */
+  animation: fadeIn 0.3s ease; /* Fade in animation */
+}
+
+.session-popup-icon {
+  font-size: 48px;   /* Icon size in popup */
+  color: var(--error-color); /* Error icon color */
+  margin-bottom: 1rem;  /* Bottom margin */
+  /* Ensure icon is visible if text-fill was transparent */
+  -webkit-text-fill-color: var(--error-color);
+  background: none;
+  animation: none;
+}
+
+.session-popup-title {
+  font-size: 1.5rem;   /* Title font size in popup */
+  font-weight: 600;    /* Bold title text */
+  margin-bottom: 1rem;  /* Bottom margin */
+  color: var(--text-primary); /* Text color from root variables */
+}
+
+.session-popup-message {
+  color: var(--text-secondary); /* Message text color from root variables */
+  margin-bottom: 1.5rem; /* Bottom margin */
+  line-height: 1.5;     /* Line height for readability */
+}
+
+.session-popup-button {
+  background: var(--accent-gradient); /* Gradient background for button */
+  color: white;        /* Button text color */
+  border: none;        /* Remove border */
+  padding: 0.75rem 2rem; /* Padding inside button */
+  border-radius: 8px; /* Rounded corners */
+  font-weight: 600;    /* Bold button text */
+  cursor: pointer;      /* Indicate button is clickable */
+  transition: transform 0.2s; /* Smooth transform on hover */
+}
+
+.session-popup-button:hover {
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+/* HTTP Warning Widget */
+.http-warning-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  display: none; /* Controlled by JS */
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.http-warning-widget {
+  position: relative;
+  width: 90%;
+  max-width: 90%; /* Seems large, kept as original */
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 99, 71, 0.9), rgba(255, 215, 0, 0.9));
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  animation: slideIn 0.5s ease-out forwards;
+  overflow: hidden;
+}
+
+.http-warning-widget::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0.3;
+  animation: rotateGlow 10s linear infinite;
+}
+
+.http-warning-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.http-warning-message {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.http-warning-recommendation {
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.http-warning-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.http-warning-close:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(90deg);
+}
+
+.http-warning-close .material-icons {
+  font-size: 20px;
+  color: white;
+  /* Reset icon gradient/animation */
+  background: none;
+  -webkit-text-fill-color: white;
+  animation: none;
+}
+
+
+/* ==========================================================================
+   Utilities & Animations
+   ========================================================================== */
+
+/* Fade In Animation Class */
+.fade-in {
+  animation: fadeIn 0.3s ease forwards; /* Apply fadeIn animation */
+}
+
+/* Version Info Animation Styles */
+#version-info {
+  /* Keyframes defined in the Keyframes section */
+  .music-note {
+    position: absolute; /* Position music notes absolutely */
+    font-size: 24px;   /* Font size for music notes */
+    pointer-events: none; /* Ensure notes don't interfere with clicks */
+    animation: float 3s infinite, twinkle 3s infinite; /* Apply animations infinitely */
+  }
+}
+
+/* Background Animation Styles */
+.background-animation {
+  position: fixed;      /* Fixed position covering viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;        /* Ensure it's behind all content */
+  opacity: 0.5;        /* Opacity for background animation */
+  background: linear-gradient(45deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb); /* Gradient colors */
+  background-size: 400% 400%; /* Size for gradient animation effect */
+  animation: gradientAnimation 15s ease infinite; /* Apply gradient animation infinitely */
+  transition: opacity 0.5s ease; /* Smooth opacity transition */
+}
+
+.background-animation.hidden {
+  opacity: 0;          /* Hide background animation by making it transparent */
+}
+
+
+/* ==========================================================================
+   Keyframes
+   ========================================================================== */
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }    /* Added opacity for skeleton */
+  50% { transform: scale(1.1); opacity: 0.5; }  /* Scale up slightly & fade skeleton */
+  100% { transform: scale(1); opacity: 1; }   /* Return to initial scale & opacity */
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; } /* Start position for shimmer */
+  100% { background-position: 200% 0; } /* End position for shimmer, creating animation */
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }     /* Start position */
+  100% { transform: translateX(-100%); } /* End position (scrolls to left) */
+}
+
+/* Background Animation for Lyrics */
+@keyframes backgroundFlow {
+  0% {
+    background-position: 0% 50%;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(255, 255, 255, 0.08);
+  }
+  100% {
+    background-position: 0% 50%;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Subtle glow animation for the lyrics container */
+@keyframes subtleGlow {
+  0%, 100% { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1); }
+  50% { box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 0 25px rgba(255, 255, 255, 0.15); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); } /* Start state (transparent and slightly down) */
+  to { opacity: 1; transform: translateY(0); }   /* End state (fully opaque and original position) */
+}
+
+/* From #version-info */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); } /* Start and end state */
+  50% { transform: translateY(-20px) rotate(10deg); } /* Mid state (moves up and rotates) */
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; } /* Start and end state (transparent) */
+  50% { opacity: 1; }     /* Mid state (opaque) */
+}
+
+/* From Session Popup */
+@keyframes popupIn {
+  from {
+    transform: translate(-50%, -60%); /* Start position (slightly above center) */
+    opacity: 0;          /* Initially transparent */
+  }
+  to {
+    transform: translate(-50%, -50%); /* End position (centered) */
+    opacity: 1;          /* Fully opaque */
+  }
+}
+
+/* From Background Animation */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;   /* Start position */
+  }
+  50% {
+    background-position: 100% 50%;  /* Mid position (shifts gradient) */
+  }
+  100% {
+    background-position: 0% 50%;   /* End position (returns to start) */
+  }
+}
+
+/* From Icon Styles */
+@keyframes musicFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* From HTTP Warning */
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+/* ==========================================================================
+   Media Queries (Responsive Design)
+   ========================================================================== */
+
+/* Mobile Responsiveness Media Queries */
+/* Adjustments for smaller screens, typically mobile devices */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;           /* Reduced padding on smaller screens */
+    padding-bottom: 5rem;    /* Keep bottom padding for mini player */
+  }
+
+  .search-container {
+    /* padding: 0 0.5rem; */ /* Original rule commented out? Keeping it commented. */
+  }
+
+  .volume-control {
+    display: none;        /* Hide volume control on mobile */
+  }
+
+  .full-player-art {
+    max-width: 300px;     /* Reduce max width of art on mobile */
+  }
+
+  .full-player-title {
+    font-size: 1.5rem;   /* Reduce title font size on mobile */
+  }
+
+  /* Artist Info specific mobile adjustments */
+  .artist-info-container {
+    flex-direction: column; /* Stack artist info vertically on mobile */
+    align-items: center;    /* Center align artist info on mobile */
+    text-align: center;   /* Center text alignment in artist info on mobile */
+    padding: 1.5rem;       /* Reduced padding for artist info on mobile */
+  }
+
+  /* Lyrics specific mobile adjustments */
+  .lyrics-container {
+    padding: 2rem; /* Reverts earlier reduction? Keeping latest rule */
+    max-width: 90%;
+    border-radius: 20px;
+    min-height: 60%; /* Smaller minimum height on mobile */
+  }
+
+   .lyrics-line {
+    font-size: 1.5rem; /* Smaller font on mobile */
+    padding: 1rem 1.5rem; /* Adjusted padding - LATEST rule */
+    line-height: 2; /* Slightly reduced line height - LATEST rule */
+  }
+
+  /* Mobile-specific progress bar enhancements */
+  .progress-bar {
+    height: 14px; /* Even bigger on mobile for touch - From first definition */
+    /* Second definition: height: 10px; - Keeping LATEST rule */
+    height: 10px; /* Bigger by default on mobile */
+  }
+
+  .progress-container:active .progress-bar {
+    height: 14px; /* Bigger when touching */
+  }
+
+  .progress-container {
+    padding: 1.25rem 0; /* Even more padding on mobile for easier touch */
+  }
+
+  /* Larger touch target on mobile */
+  .progress-hover {
+    top: -15px;
+    height: calc(100% + 30px);
+  }
+
+  /* Integration Modal mobile adjustments */
+  .integration-container {
+    padding: 1rem;           /* Reduced padding on mobile */
+  }
+
+  .size-buttons, .theme-buttons {
+    flex-wrap: wrap;      /* Wrap buttons on mobile */
+  }
+
+  .code-block {
+    font-size: 0.8rem;   /* Reduced font size for code on mobile */
+  }
+
+  /* Artist Overview mobile adjustments */
+   .artist-overview-container {
+    padding: 1.5rem;       /* Reduced padding on mobile */
+  }
+
+  .artist-stats { /* Targeting overview stats */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Adjusted column width on mobile */
+  }
+
+  .stat-card { /* Targeting overview stats card */
+    padding: 1rem;         /* Reduced padding on mobile stat card */
+  }
+
+  /* Insights Modal mobile adjustments */
+  .insights-content {
+    padding: 1rem;           /* Reduced padding on mobile */
+  }
+
+  .insights-modal .stats-grid { /* Stats grid adjustments on mobile */
+    grid-template-columns: repeat(2, 1fr); /* Two columns on mobile */
+  }
+
+  .completion-stats {
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
+
+  .completion-chart {
+    height: 250px;      /* Reduced chart height on mobile */
+  }
+
+  .patterns-container {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1rem;         /* Reduced gap on mobile */
+  }
+
+} /* End @media (max-width: 768px) */
+
+
+
+/* Custom Scrollbar for WebKit Browsers (Chrome, Safari, Edge) */
+*::-webkit-scrollbar {
+  width: 12px; /* Width of the vertical scrollbar */
+  height: 12px; /* Height of the horizontal scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--surface-color); /* Darker surface color for track */
+  border-radius: 10px; /* Rounded corners for a smooth look */
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--accent-gradient); /* Gradient from indigo to light blue */
+  border-radius: 10px; /* Rounded thumb for elegance */
+  border: 2px solid var(--background-color); /* Navy border to blend with background */
+  box-shadow: 0 0 5px rgba(79, 70, 229, 0.5); /* Subtle glow effect */
+  transition: background 0.3s ease, box-shadow 0.3s ease; /* Smooth hover transitions */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #818cf8, #4f46e5); /* Inverted gradient on hover */
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.8); /* Enhanced glow on hover */
+}
+
+*::-webkit-scrollbar-button {
+  display: none; /* Hide scrollbar buttons for a minimalist design */
+}
+
+/* Custom Scrollbar for Firefox */
+* {
+  scrollbar-width: thin; /* Sleek, thin scrollbar */
+  scrollbar-color: var(--primary-light) var(--surface-color); /* Light blue thumb, dark track */
+}
+
+

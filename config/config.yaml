@@ -1,0 +1,29 @@
+server_config:
+  flask:
+    debug: true
+    extra_files: []
+    processes: 1
+    threaded: true
+    use_reloader: true
+  gunicorn:
+    accesslog: null
+    bind: null
+    daemon: false
+    errorlog: null
+    graceful_timeout: 30
+    keepalive: 5
+    loglevel: info
+    max_memory_restart: null
+    max_requests: 0
+    max_requests_jitter: 0
+    pidfile: null
+    
+    threads: 1
+    timeout: 30
+    worker_class: sync
+    worker_connections: 1000
+    worker_tmp_dir: null
+    workers: '3'
+  host: 0.0.0.0
+  port: 80
+  server_type: flask

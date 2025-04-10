@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Issue Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href = "/design/admin-issues" rel = "stylesheet">
+</head>
+<body>
+    <div class="admin-dashboard">
+        <div class="admin-header">
+            <h1 class="admin-title">Issue Management Dashboard</h1>
+            <div class="admin-actions">
+                <button class="admin-button secondary" id="refreshButton">
+                    <span class="material-icons">refresh</span>
+                    Refresh
+                </button>
+                 <button class="admin-button secondary" id="logoutButton">
+                    <span class="material-icons">logout</span>
+                    Logout Admin View
+                </button>
+            </div>
+        </div>
+
+         <div id="generalErrorContainer"></div>
+
+        <div class="admin-stats">
+            <div class="stat-card">
+                <div class="stat-title">Total Issues</div>
+                <div class="stat-value" id="totalIssuesCount">--</div>
+                <div class="stat-change" id="totalIssuesChange">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Open Issues</div>
+                <div class="stat-value" id="openIssuesCount">--</div>
+                <div class="stat-change" id="openIssuesChange">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Resolved Issues</div>
+                <div class="stat-value" id="resolvedIssuesCount">--</div>
+                 <div class="stat-change" id="resolvedIssuesChange">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Closed Issues</div>
+                <div class="stat-value" id="closedIssuesCount">--</div>
+                <div class="stat-change" id="closedIssuesChange">--</div>
+            </div>
+        </div>
+
+        <div class="filters-container">
+            <div class="filter-group">
+                <select class="filter-select" id="statusFilter">
+                    <option value="all">All Statuses</option>
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Closed">Closed</option>
+                </select>
+                 <select class="filter-select" id="dateFilter">
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="last_month">Last Month</option>
+                </select>
+            </div>
+            <div class="search-container">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" placeholder="Search issues by ID, topic, user..." class="search-input" id="searchInput">
+            </div>
+        </div>
+
+        <div class="issues-table-container">
+            <table class="issues-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Issue Topic</th>
+                        <th>Reported By</th>
+                        <th>Date Reported</th>
+                        <th>Status</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody id="issuesTableBody">
+                    <tr class="loading-row">
+                        <td colspan="6">
+                            <div class="loading-spinner"></div> Loading issues...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination" id="paginationContainer">
+            <!-- Pagination will be dynamically generated -->
+        </div>
+    </div>
+
+    <!-- Issue Detail Modal -->
+    <div class="issue-detail-modal" id="issueDetailModal">
+        <div class="issue-detail-content">
+            <div class="issue-detail-header">
+                <h2 class="issue-detail-title" id="modalIssueTitle">Issue Title</h2>
+                <button class="close-button" id="closeDetailModal" aria-label="Close issue details">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="issue-detail-body">
+                 <div id="modalErrorContainer"></div> <!-- Error container for modal actions -->
+
+                <div class="issue-metadata">
+                    <div><strong>ID:</strong> #<span id="modalIssueId">0</span></div>
+                    <div><strong>Reported By:</strong> <span id="modalReportedBy">Username</span></div>
+                    <div><strong>Date Reported:</strong> <span id="modalReportDate">Date</span></div>
+                    <div><strong>Last Updated:</strong> <span id="modalUpdateDate">Date</span></div>
+                    <div><strong>Status:</strong> <span id="modalStatus">Open</span></div>
+                </div>
+
+                <h3 class="comments-header" style="margin-top: 15px; margin-bottom: 5px; padding-bottom: 0; border: none;">Description</h3>
+                <div class="issue-description" id="modalIssueDescription">
+                    Issue description will appear here.
+                </div>
+
+                <div class="comments-section">
+                    <h3 class="comments-header">Discussion</h3>
+                    <div id="commentsContainer">
+                        <!-- Comments will be inserted here -->
+                        <div class="flex-center" style="padding: 20px; color: #9ca3af;">
+                             <div class="loading-spinner" style="margin-right: 10px;"></div> Loading comments...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="add-comment-section">
+                    <textarea class="comment-textarea" id="newCommentText" placeholder="Add your response here..."></textarea>
+                    <div class="comment-actions">
+                        <div class="admin-actions">
+                             <select class="status-select" id="statusUpdateSelect">
+                                <!-- Options will be added by JS based on current status -->
+                                <option value="">Update Status</option>
+                                <option value="Open">Open</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Resolved">Resolved</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                        </div>
+                        <button class="admin-button primary" id="submitCommentButton">
+                            <span class="material-icons">send</span>
+                            Send Response / Update Status
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Configuration ---
+            const ITEMS_PER_PAGE = 15;
+            const ADMIN_COMMENT_TEXT = "Sangeet Admin"; // Display name for admin
+
+            // --- State ---
+            let currentPage = 1;
+            let totalPages = 1;
+            let currentIssueId = null;
+            let allIssues = []; // Holds all fetched issues
+            let filteredIssues = []; // Holds issues after filtering/searching
+            let currentSort = { column: 'created_at', direction: 'desc' };
+
+            // --- DOM Elements ---
+            const issuesTableBody = document.getElementById('issuesTableBody');
+            const paginationContainer = document.getElementById('paginationContainer');
+            const refreshButton = document.getElementById('refreshButton');
+            const logoutButton = document.getElementById('logoutButton'); // Added logout button
+            const statusFilter = document.getElementById('statusFilter');
+            const dateFilter = document.getElementById('dateFilter');
+            const searchInput = document.getElementById('searchInput');
+            const generalErrorContainer = document.getElementById('generalErrorContainer');
+            const toastContainer = document.getElementById('toastContainer');
+
+            // Stats elements
+            const totalIssuesCount = document.getElementById('totalIssuesCount');
+            const openIssuesCount = document.getElementById('openIssuesCount');
+            const resolvedIssuesCount = document.getElementById('resolvedIssuesCount');
+            const closedIssuesCount = document.getElementById('closedIssuesCount');
+
+            // Modal elements
+            const issueDetailModal = document.getElementById('issueDetailModal');
+            const closeDetailModal = document.getElementById('closeDetailModal');
+            const modalIssueTitle = document.getElementById('modalIssueTitle');
+            const modalIssueId = document.getElementById('modalIssueId');
+            const modalReportedBy = document.getElementById('modalReportedBy');
+            const modalReportDate = document.getElementById('modalReportDate');
+            const modalUpdateDate = document.getElementById('modalUpdateDate');
+            const modalStatus = document.getElementById('modalStatus');
+            const modalIssueDescription = document.getElementById('modalIssueDescription');
+            const commentsContainer = document.getElementById('commentsContainer');
+            const newCommentText = document.getElementById('newCommentText');
+            const submitCommentButton = document.getElementById('submitCommentButton');
+            const statusUpdateSelect = document.getElementById('statusUpdateSelect');
+            const modalErrorContainer = document.getElementById('modalErrorContainer');
+
+            // --- Initialization ---
+            showLoading();
+            loadInitialData();
+
+            // --- Event Listeners ---
+            refreshButton.addEventListener('click', loadInitialData);
+            statusFilter.addEventListener('change', applyFiltersAndSearch);
+            dateFilter.addEventListener('change', applyFiltersAndSearch);
+            searchInput.addEventListener('input', debounce(applyFiltersAndSearch, 300));
+            closeDetailModal.addEventListener('click', closeIssueDetail);
+            submitCommentButton.addEventListener('click', handleSubmit);
+            // Add listeners to table headers for sorting
+            document.querySelectorAll('.issues-table th').forEach(th => {
+                 // Assuming th has data-column attribute e.g., <th data-column="id">ID</th>
+                 const column = th.dataset.column;
+                 if (column) {
+                      th.addEventListener('click', () => sortTable(column));
+                 }
+            });
+
+             // Close modal on escape key
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && issueDetailModal.classList.contains('visible')) {
+                    closeIssueDetail();
+                }
+            });
+
+             // Close modal when clicking outside the content
+            issueDetailModal.addEventListener('click', (event) => {
+                if (event.target === issueDetailModal) {
+                    closeIssueDetail();
+                }
+            });
+            logoutButton.addEventListener('click', handleAdminLogout);
+
+
+            // --- Core Functions ---
+
+            function showLoading() {
+                 issuesTableBody.innerHTML = `<tr class="loading-row"><td colspan="6"><div class="loading-spinner"></div> Loading issues...</td></tr>`;
+                 paginationContainer.innerHTML = '';
+                 setStatValue(totalIssuesCount, '--');
+                 setStatValue(openIssuesCount, '--');
+                 setStatValue(resolvedIssuesCount, '--');
+                 setStatValue(closedIssuesCount, '--');
+                 generalErrorContainer.innerHTML = ''; // Clear errors on reload
+            }
+
+            function loadInitialData() {
+                 showLoading();
+                 Promise.all([loadIssues(), loadStats()])
+                      .catch(error => {
+                           console.error("Error loading initial data:", error);
+                           displayGeneralError("Failed to load initial data. Please check your connection and try again.");
+                           issuesTableBody.innerHTML = `<tr class="loading-row"><td colspan="6" style="color: #ef4444;">Failed to load data.</td></tr>`;
+                      });
+            }
+
+
+            async function loadIssues() {
+                try {
+                    const response = await fetchWithAuth('/api/admin/issues');
+                    const data = await response.json();
+                    allIssues = data; // Store all issues
+                    filteredIssues = [...allIssues]; // Initially, filtered issues are all issues
+                    applyFiltersAndSearch(); // Apply default filters/search (which is none initially) and display
+                } catch (error) {
+                    console.error('Error loading issues:', error);
+                     displayGeneralError(`Failed to load issues: ${error.message || 'Network error'}. Please refresh.`);
+                    issuesTableBody.innerHTML = `
+                        <tr class="loading-row">
+                            <td colspan="6" style="text-align: center; padding: 30px; color: #ef4444;">
+                                <span class="material-icons" style="vertical-align: bottom; margin-right: 5px;">error</span> Failed to load issues. Please try refreshing.
+                            </td>
+                        </tr>
+                    `;
+                     throw error; // Re-throw error to be caught by Promise.all
+                }
+            }
+
+            async function loadStats() {
+                try {
+                     const response = await fetchWithAuth('/api/admin/stats');
+                     const stats = await response.json();
+                    // Update stats UI (add placeholders if data is missing)
+                     setStatValue(totalIssuesCount, stats.total ?? '--');
+                     setStatValue(openIssuesCount, stats.open ?? '--');
+                     setStatValue(resolvedIssuesCount, stats.resolved ?? '--');
+                     setStatValue(closedIssuesCount, stats.closed ?? '--');
+                     // You can add change indicators here if your API provides them
+                } catch (error) {
+                     console.error('Error loading stats:', error);
+                     // Optionally show a specific error for stats
+                     // Don't clear the table if only stats fail
+                     displayGeneralError("Could not load dashboard statistics.");
+                     setStatValue(totalIssuesCount, 'Error');
+                     setStatValue(openIssuesCount, 'Error');
+                     setStatValue(resolvedIssuesCount, 'Error');
+                     setStatValue(closedIssuesCount, 'Error');
+                }
+            }
+
+             function applyFiltersAndSearch() {
+                const status = statusFilter.value;
+                const dateRange = dateFilter.value;
+                const searchTerm = searchInput.value.toLowerCase().trim();
+
+                filteredIssues = allIssues.filter(issue => {
+                    // Status filter
+                    const statusMatch = (status === 'all' || issue.status === status);
+
+                    // Date filter
+                    let dateMatch = true;
+                     if (dateRange !== 'all') {
+                         const issueDate = new Date(issue.created_at);
+                         const now = new Date();
+                         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                         const startOfWeek = new Date(today);
+                         startOfWeek.setDate(today.getDate() - today.getDay()); // Assuming Sunday is the start of the week
+                         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                         const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() -1 , 1);
+                         const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+
+
+                         switch (dateRange) {
+                              case 'today':
+                                   dateMatch = issueDate >= today;
+                                   break;
+                              case 'week':
+                                   dateMatch = issueDate >= startOfWeek;
+                                   break;
+                              case 'month':
+                                   dateMatch = issueDate >= startOfMonth;
+                                   break;
+                               case 'last_month':
+                                    dateMatch = issueDate >= startOfLastMonth && issueDate <= endOfLastMonth;
+                         }
+                     }
+
+                    // Search filter (check ID, topic, username, details)
+                    const searchMatch = (
+                        searchTerm === '' ||
+                        issue.id.toString().includes(searchTerm) ||
+                        issue.topic.toLowerCase().includes(searchTerm) ||
+                        (issue.username && issue.username.toLowerCase().includes(searchTerm)) ||
+                        issue.details.toLowerCase().includes(searchTerm) // Optional: search details too
+                    );
+
+                    return statusMatch && dateMatch && searchMatch;
+                });
+
+                currentPage = 1; // Reset to first page after filtering/searching
+                 sortAndDisplayIssues(); // Re-sort and display the filtered list
+            }
+
+            function sortAndDisplayIssues() {
+                // Sorting logic (example for created_at)
+                 if (currentSort.column) {
+                     filteredIssues.sort((a, b) => {
+                         let valA = a[currentSort.column];
+                         let valB = b[currentSort.column];
+
+                         // Basic comparison - extend for different types if needed
+                         if (typeof valA === 'string') valA = valA.toLowerCase();
+                         if (typeof valB === 'string') valB = valB.toLowerCase();
+                         if (currentSort.column.includes('date') || currentSort.column.includes('at')) { // Treat date strings
+                             valA = new Date(valA).getTime();
+                             valB = new Date(valB).getTime();
+                         }
+
+
+                         if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
+                         if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
+                         return 0;
+                     });
+                 }
+                displayIssues(filteredIssues);
+            }
+
+            function sortTable(column) {
+                 if (currentSort.column === column) {
+                     currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                 } else {
+                     currentSort.column = column;
+                     currentSort.direction = 'desc'; // Default direction
+                 }
+                  // Update header visual indicators if needed
+                 sortAndDisplayIssues();
+            }
+
+
+            function displayIssues(issues) {
+                 if (!issues || issues.length === 0) {
+                    issuesTableBody.innerHTML = `
+                        <tr class="loading-row">
+                            <td colspan="6" style="text-align: center; padding: 30px; color: #9ca3af;">
+                                No issues found matching your criteria.
+                            </td>
+                        </tr>
+                    `;
+                    paginationContainer.innerHTML = '';
+                    return;
+                 }
+
+                totalPages = Math.ceil(issues.length / ITEMS_PER_PAGE);
+                const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+                const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, issues.length);
+                const currentIssues = issues.slice(startIndex, endIndex);
+
+                issuesTableBody.innerHTML = currentIssues.map(issue => {
+                     const statusClass = issue.status.toLowerCase().replace(/\s+/g, '-'); // e.g., 'in-progress'
+                     return `
+                        <tr class="issue-row" data-id="${issue.id}">
+                            <td>#${issue.id}</td>
+                            <td>${escapeHtml(issue.topic)}</td>
+                            <td>${escapeHtml(issue.username || 'Unknown User')}</td>
+                            <td>${formatDate(issue.created_at)}</td>
+                            <td><span class="status-badge ${statusClass}">${escapeHtml(issue.status)}</span></td>
+                            <td>${formatDate(issue.updated_at)}</td>
+                        </tr>
+                    `;
+                 }).join('');
+
+                // Add click event to rows
+                issuesTableBody.querySelectorAll('.issue-row').forEach(row => {
+                    row.addEventListener('click', () => {
+                        const issueId = row.dataset.id;
+                        openIssueDetail(issueId);
+                    });
+                });
+
+                generatePagination();
+            }
+
+
+            async function openIssueDetail(issueId) {
+                 clearModalErrors();
+                 currentIssueId = issueId;
+                 issueDetailModal.classList.add('visible');
+                 document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+                 // Reset modal content while loading
+                 modalIssueTitle.textContent = "Loading...";
+                 modalIssueId.textContent = issueId;
+                 modalReportedBy.textContent = "Loading...";
+                 modalReportDate.textContent = "Loading...";
+                 modalUpdateDate.textContent = "Loading...";
+                 modalStatus.textContent = "Loading...";
+                 modalIssueDescription.textContent = "Loading description...";
+                 commentsContainer.innerHTML = '<div class="flex-center" style="padding: 20px; color: #9ca3af;"><div class="loading-spinner" style="margin-right: 10px;"></div> Loading comments...</div>';
+                 newCommentText.value = ''; // Clear comment box
+                 statusUpdateSelect.value = ''; // Reset status dropdown
+
+
+                 try {
+                     const response = await fetchWithAuth(`/api/admin/issues/${issueId}`);
+                     const issue = await response.json();
+
+                     modalIssueTitle.textContent = issue.topic;
+                     modalReportedBy.textContent = issue.username || 'Unknown User';
+                     modalReportDate.textContent = formatDate(issue.created_at);
+                     modalUpdateDate.textContent = formatDate(issue.updated_at);
+                     modalStatus.textContent = issue.status;
+                     modalIssueDescription.textContent = issue.details || '(No description provided)';
+                     statusUpdateSelect.value = issue.status; // Set dropdown to current status
+
+                     displayComments(issue.comments || []);
+
+                 } catch (error) {
+                    console.error('Error loading issue details:', error);
+                     modalIssueDescription.textContent = 'Failed to load issue details. Please close and try again.';
+                     commentsContainer.innerHTML = '<div style="color: #ef4444; text-align: center; padding: 20px;">Failed to load comments.</div>';
+                     displayModalError(`Failed to load details: ${error.message || 'Network error'}`);
+                 }
+            }
+
+             function closeIssueDetail() {
+                issueDetailModal.classList.remove('visible');
+                document.body.style.overflow = ''; // Restore background scrolling
+                currentIssueId = null;
+                clearModalErrors();
+            }
+
+            function displayComments(comments) {
+                if (!comments || comments.length === 0) {
+                    commentsContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #9ca3af;">No comments yet.</div>';
+                    return;
+                }
+
+                commentsContainer.innerHTML = comments.map(comment => {
+                    const authorName = comment.is_admin ? ADMIN_COMMENT_TEXT : (comment.username || 'User');
+                    const adminClass = comment.is_admin ? 'admin-comment' : '';
+                     const adminTag = comment.is_admin ? '<span class="admin-tag">Admin</span>' : '';
+                    return `
+                        <div class="comment ${adminClass}">
+                            <div class="comment-header">
+                                <span class="comment-author">${escapeHtml(authorName)}${adminTag}</span>
+                                <span class="comment-date">${formatDate(comment.created_at)}</span>
+                            </div>
+                            <div class="comment-body">
+                                ${escapeHtml(comment.comment)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                 // Scroll to the bottom of the comments
+                 commentsContainer.scrollTop = commentsContainer.scrollHeight;
+            }
+
+            async function handleSubmit() {
+                 clearModalErrors(); // Clear previous errors
+                 if (!currentIssueId) return;
+
+                 const commentText = newCommentText.value.trim();
+                 const newStatus = statusUpdateSelect.value;
+                 const originalStatus = modalStatus.textContent; // Get status before update
+
+                 let commentSubmitted = false;
+                 let statusUpdated = false;
+
+                 submitCommentButton.disabled = true;
+                 submitCommentButton.innerHTML = `<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px; display: inline-block; margin-right: 5px;"></div> Processing...`;
+
+
+                 try {
+                      // 1. Submit comment if provided
+                     if (commentText) {
+                         await submitComment(commentText);
+                         commentSubmitted = true;
+                     }
+
+                      // 2. Update status if changed
+                     if (newStatus && newStatus !== originalStatus) {
+                         await updateIssueStatus(newStatus);
+                         statusUpdated = true;
+                     }
+
+                      // 3. Refresh data if anything changed
+                     if (commentSubmitted || statusUpdated) {
+                         newCommentText.value = ''; // Clear text area
+                         showToast('Update successful!', 'success');
+
+                         // Refresh details in modal *and* main list/stats
+                         await openIssueDetail(currentIssueId); // Refresh modal data first
+                         await Promise.all([loadIssues(), loadStats()]); // Refresh background data
+
+                     } else if (!commentText && (!newStatus || newStatus === originalStatus)) {
+                         // Nothing was actually submitted or changed
+                         displayModalError('Please enter a comment or select a new status to update.');
+                     }
+
+                 } catch (error) {
+                    console.error("Error during submit:", error);
+                     displayModalError(`Failed to update: ${error.message || 'Network error'}`);
+                     showToast('Update failed!', 'error');
+                      // Optionally try to rollback UI if partial success occurred, though complex.
+                 } finally {
+                      submitCommentButton.disabled = false;
+                     submitCommentButton.innerHTML = `<span class="material-icons">send</span> Send Response / Update Status`;
+                 }
+            }
+
+             async function submitComment(commentText) {
+                 if (!currentIssueId || !commentText) return; // Already checked in handleSubmit, but good practice
+
+                 await fetchWithAuth(`/api/admin/issues/${currentIssueId}/comment`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ comment: commentText })
+                 });
+                 // Don't need to handle response here, handleSubmit will refresh
+            }
+
+            async function updateIssueStatus(newStatus) {
+                 if (!currentIssueId || !newStatus) return; // Already checked in handleSubmit
+
+                 await fetchWithAuth(`/api/admin/issues/${currentIssueId}/update_status`, {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({ status: newStatus })
+                 });
+                 // Don't need to handle response here, handleSubmit will refresh
+            }
+
+
+             function generatePagination() {
+                paginationContainer.innerHTML = '';
+                if (totalPages <= 1) return;
+
+                const createButton = (text, page, isDisabled = false, isActive = false) => {
+                    const button = document.createElement('button');
+                    button.innerHTML = text; // Use innerHTML to allow icons like «
+                    button.disabled = isDisabled;
+                    if (isActive) button.classList.add('active');
+                    if (!isDisabled) {
+                         button.onclick = () => {
+                             currentPage = page;
+                             sortAndDisplayIssues(); // Re-display correct page
+                         };
+                    }
+                    return button;
+                };
+
+                 // Previous Button
+                paginationContainer.appendChild(createButton('«', currentPage - 1, currentPage === 1));
+
+                 // Page Number Buttons (simplified example - can be improved with ellipses for many pages)
+                const maxPagesToShow = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+                let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+                if (endPage - startPage + 1 < maxPagesToShow) {
+                    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                }
+
+
+                 if (startPage > 1) {
+                    paginationContainer.appendChild(createButton('1', 1));
+                    if (startPage > 2) paginationContainer.appendChild(createButton('...', currentPage, true)); // Ellipsis
+                 }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationContainer.appendChild(createButton(i, i, false, i === currentPage));
+                }
+
+                 if (endPage < totalPages) {
+                     if (endPage < totalPages -1) paginationContainer.appendChild(createButton('...', currentPage, true)); // Ellipsis
+                     paginationContainer.appendChild(createButton(totalPages, totalPages));
+                 }
+
+
+                 // Next Button
+                paginationContainer.appendChild(createButton('»', currentPage + 1, currentPage === totalPages));
+            }
+
+
+             async function handleAdminLogout() {
+                 // This primarily removes the frontend flag.
+                 // For true statelessness, server-side would handle auth per request.
+                 // In this simple password model, we clear the session variable.
+                 try {
+                      // Make a request to a (currently non-existent but good practice) backend logout endpoint if needed
+                      // await fetch('/api/admin/logout', { method: 'POST' }); // Example
+
+                      // Redirect to the login prompt page or root
+                      window.location.href = '/view/issues'; // Redirecting back forces password check
+                 } catch (error) {
+                     console.error("Logout error:", error);
+                     displayGeneralError("Logout failed. Please try again.");
+                 }
+             }
+
+            // --- Utility Functions ---
+            function setStatValue(element, value) {
+                 if(element) element.textContent = value;
+             }
+
+            function formatDate(dateString) {
+                 if (!dateString) return 'N/A';
+                 try {
+                    const date = new Date(dateString);
+                    // Make more user-friendly
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit'//, hour12: true // Optional: AM/PM
+                    });
+                 } catch (e) {
+                    console.error("Error formatting date:", dateString, e);
+                    return 'Invalid Date';
+                 }
+            }
+
+            function debounce(func, delay) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, delay);
+                };
+            }
+
+             function escapeHtml(unsafe) {
+                if (unsafe === null || typeof unsafe === 'undefined') return '';
+                 return unsafe
+                     .toString()
+                     .replace(/&/g, "&")
+                     .replace(/</g, "<")
+                     .replace(/>/g, ">")
+                     .replace(/"/g, '"')
+                     .replace(/'/g, "'");
+             }
+
+            function displayGeneralError(message) {
+                generalErrorContainer.innerHTML = `<div class="error-message">${escapeHtml(message)}</div>`;
+            }
+             function displayModalError(message) {
+                modalErrorContainer.innerHTML = `<div class="error-message">${escapeHtml(message)}</div>`;
+            }
+             function clearModalErrors() {
+                 modalErrorContainer.innerHTML = '';
+             }
+
+
+            function showToast(message, type = 'info') { // type can be 'info', 'success', 'error'
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+
+                 // Slight delay to allow element rendering before fade-in
+                setTimeout(() => {
+                    toast.classList.add('visible');
+                 }, 10);
+
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toast.classList.remove('visible');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 300); // Wait for fade-out transition
+                 }, 3000);
+             }
+
+
+             async function fetchWithAuth(url, options = {}) {
+                // In this simple model, authentication happens server-side via session.
+                // We just need to handle potential 401/403 responses which might indicate session expiry/logout.
+                 const response = await fetch(url, options);
+
+                if (response.status === 401 || response.status === 403) {
+                     // Handle unauthorized access - likely session expired or password check failed initially
+                    displayGeneralError("Authentication failed or session expired. Please re-enter the password.");
+                     // You might want to redirect to the password entry page automatically:
+                    window.location.href = '/view/issues?session_expired=true';
+                     throw new Error("Unauthorized"); // Stop further processing
+                 }
+
+                 if (!response.ok) {
+                     // Handle other errors (like 500, 404 etc.)
+                     let errorMsg = `HTTP error ${response.status}`;
+                     try {
+                          // Try to parse error message from server response body
+                          const errorData = await response.json();
+                          errorMsg = errorData.error || errorData.message || errorMsg;
+                      } catch (e) { /* Ignore if response body is not JSON */ }
+                      throw new Error(errorMsg);
+                 }
+                return response; // Return the successful response
+            }
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Head Section: Metadata, Title, Styles and Fonts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ song.title }} - Sangeet Embed</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* CSS Styles: Styling for the Embed Player */
+    {% if theme == "purple" %}
+    /* Purple Theme Variables */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #4c1d95, #2e1065);
+      --accent-color: #8b5cf6;
+      --surface-color: #5b21b6;
+      --glow-color: rgba(139, 92, 246, 0.3);
+      --artwork-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+      --button-gradient: linear-gradient(45deg, #6d28d9, #7c3aed);
+    }
+    {% elif theme == "blue" %}
+    /* Blue Theme Variables */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #1e40af, #1e3a8a);
+      --accent-color: #3b82f6;
+      --surface-color: #1d4ed8;
+      --glow-color: rgba(59, 130, 246, 0.3);
+      --artwork-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+      --button-gradient: linear-gradient(45deg, #2563eb, #3b82f6);
+    }
+    {% elif theme == "dark" %}
+    /* Dark Theme Variables */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #18181b, #09090b);
+      --accent-color: #6b7280;
+      --surface-color: #27272a;
+      --glow-color: rgba(107, 114, 128, 0.3);
+      --artwork-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      --button-gradient: linear-gradient(45deg, #4b5563, #6b7280);
+    }
+    {% else %}
+    /* Default Theme Variables */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #1e293b, #0f172a);
+      --accent-color: #818cf8;
+      --surface-color: #334155;
+      --glow-color: rgba(129, 140, 248, 0.3);
+      --artwork-shadow: 0 4px 20px rgba(129, 140, 248, 0.4);
+      --button-gradient: linear-gradient(45deg, #4f46e5, #818cf8);
+    }
+    {% endif %}
+
+    /* Reset and Box-sizing */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Keyframe Animations */
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 0.3; }
+      100% { transform: scale(1); opacity: 0.5; }
+    }
+
+    @keyframes floatArtwork {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes waveMove {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Body Styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-gradient);
+      background-size: 400% 400%;
+      animation: gradientMove 15s ease infinite;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Embed Player Container */
+    .embed-player {
+      width: 100%;
+      padding: 1.5rem;
+      position: relative;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      clip-path: polygon(
+        0% 10%,
+        10% 0%,
+        90% 0%,
+        100% 10%,
+        100% 90%,
+        90% 100%,
+        10% 100%,
+        0% 90%
+      );
+      overflow: hidden;
+    }
+
+    /* Embed Player Glow Effect (Pseudo-element) */
+    .embed-player::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 150px;
+      height: 150px;
+      background: var(--accent-color);
+      border-radius: 45% 55% 70% 35% / 40% 45% 55% 60%;
+      filter: blur(60px);
+      opacity: 0.15;
+      animation: pulseGlow 4s ease infinite;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Player Content Layout */
+    .player-content {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Artwork Container */
+    .artwork {
+      width: {{ "80px" if size == "small" else "100px" if size == "normal" else "120px" }};
+      height: {{ "80px" if size == "small" else "100px" if size == "normal" else "120px" }};
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+      box-shadow: var(--artwork-shadow);
+      animation: floatArtwork 3s ease infinite;
+      transform-origin: center;
+    }
+
+    /* Artwork Gradient Overlay (Pseudo-element) */
+    .artwork::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        45deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0) 100%
+      );
+      z-index: 1;
+    }
+
+    /* Artwork Image */
+    .artwork img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    /* Artwork Image Hover Effect */
+    .artwork:hover img {
+      transform: scale(1.1);
+    }
+
+    /* Song Info Container */
+    .info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* Song Title */
+    .title {
+      font-size: {{ "0.9rem" if size == "small" else "1rem" if size == "normal" else "1.2rem" }};
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      letter-spacing: 0.02em;
+    }
+
+    /* Song Artist */
+    .artist {
+      font-size: {{ "0.8rem" if size == "small" else "0.9rem" if size == "normal" else "1rem" }};
+      color: rgba(255,255,255,0.8);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.01em;
+    }
+
+    /* Controls Container */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Play Button */
+    .play-button {
+      width: {{ "32px" if size == "small" else "36px" if size == "normal" else "40px" }};
+      height: {{ "32px" if size == "small" else "36px" if size == "normal" else "40px" }};
+      border-radius: 40% 60% 50% 50% / 50% 45% 55% 50%;
+      border: none;
+      background: var(--button-gradient);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+      box-shadow: 0 2px 10px var(--glow-color);
+    }
+
+    /* Play Button Hover Effect */
+    .play-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 15px var(--glow-color);
+    }
+
+    /* Play Button Active Effect */
+    .play-button:active {
+      transform: scale(0.95);
+    }
+
+    /* Progress Container */
+    .progress-container {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: height 0.2s ease;
+    }
+
+    /* Progress Container Hover Effect */
+    .progress-container:hover {
+      height: 6px;
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--button-gradient);
+      border-radius: inherit;
+      transition: width 0.1s linear;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Progress Bar Shimmer Effect (Pseudo-element) */
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.2) 50%,
+        rgba(255,255,255,0) 100%
+      );
+      animation: shimmer 2s infinite;
+    }
+
+    /* Time Display */
+    .time {
+      font-size: {{ "0.7rem" if size == "small" else "0.8rem" if size == "normal" else "0.9rem" }};
+      color: rgba(255,255,255,0.8);
+      min-width: 45px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+
+    /* Branding Section */
+    .branding {
+      margin-top: 1rem;
+      text-align: right;
+      font-size: {{ "0.7rem" if size == "small" else "0.8rem" if size == "normal" else "0.9rem" }};
+      opacity: 0.9;
+      transition: opacity 0.2s ease;
+    }
+
+    /* Branding Hover Effect */
+    .branding:hover {
+      opacity: 1;
+    }
+
+    /* Branding Link */
+    .branding a {
+      color: var(--accent-color);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px);
+      transition: all 0.2s ease;
+    }
+
+    /* Branding Link Hover Effect */
+    .branding a:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-1px);
+    }
+
+    /* Premium Badge */
+    .premium-badge {
+      font-size: {{ "0.6rem" if size == "small" else "0.7rem" if size == "normal" else "0.8rem" }};
+      background: var(--button-gradient);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      box-shadow: 0 2px 8px var(--glow-color);
+    }
+
+    /* Wave Animation under Progress Bar */
+    .wave-animation {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-color);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Wave Animation when Playing */
+    .is-playing .wave-animation {
+      opacity: 0.5;
+      animation: waveMove 2s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- Embed Player Container -->
+  <div class="embed-player">
+    <!-- Player Content: Artwork, Info, Controls -->
+    <div class="player-content">
+      <!-- Artwork Section -->
+      <div class="artwork">
+        <img src="{{ song.thumbnail }}" alt="{{ song.title }}">
+      </div>
+
+      <!-- Song Information Section -->
+      <div class="info">
+        <div class="title">{{ song.title }}</div>
+        <div class="artist">{{ song.artist }}</div>
+
+        <!-- Playback Controls -->
+        <div class="controls">
+          <button class="play-button" id="playButton">
+            <span class="material-icons" style="font-size: 1.2em">{{ "pause" if autoplay else "play_arrow" }}</span>
+          </button>
+
+          <!-- Progress Bar Container -->
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="wave-animation"></div>
+          </div>
+
+          <!-- Time Display -->
+          <div class="time" id="timeDisplay">0:00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Branding Section -->
+    <div class="branding">
+      <a href="{{ host_url }}/play/{{ song.id }}" target="_blank">
+        Listen on Sangeet
+        <span class="premium-badge">Premium</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Audio Element (Hidden) -->
+  <audio id="audioElement" preload="auto" {{ "autoplay" if autoplay else "" }}>
+    <source src="{{ stream_url }}" type="audio/flac">
+  </audio>
+
+  <!-- JavaScript Section: Player Functionality -->
+  <script>
+    // JavaScript Code: Handling playback, UI updates, and interactions
+    const audio = document.getElementById('audioElement');
+    const playButton = document.getElementById('playButton');
+    const progressBar = document.getElementById('progressBar');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const embedPlayer = document.querySelector('.embed-player');
+
+    // Function to format time in MM:SS
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Function to update progress bar and time display
+    function updateProgress() {
+      if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = `${percent}%`;
+        timeDisplay.textContent = formatTime(audio.currentTime);
+      }
+      requestAnimationFrame(updateProgress);
+    }
+
+    // Event listener for audio play event
+    audio.addEventListener('play', () => {
+      playButton.querySelector('.material-icons').textContent = 'pause';
+      embedPlayer.classList.add('is-playing');
+      requestAnimationFrame(updateProgress);
+    });
+
+    // Event listener for audio pause event
+    audio.addEventListener('pause', () => {
+      playButton.querySelector('.material-icons').textContent = 'play_arrow';
+      embedPlayer.classList.remove('is-playing');
+    });
+
+    // Event listener for play/pause button click
+    playButton.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    });
+
+    // Event listener for progress bar click (seeking)
+    document.querySelector('.progress-container').addEventListener('click', (e) => {
+      const rect = e.target.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      if (audio.duration) {
+        audio.currentTime = audio.duration * percent;
+      }
+    });
+
+    // Artwork hover effects for rotation and scale
+    const artwork = document.querySelector('.artwork img');
+    artwork.addEventListener('mousemove', (e) => {
+      const bounds = artwork.getBoundingClientRect();
+      const mouseX = e.clientX - bounds.left;
+      const mouseY = e.clientY - bounds.top;
+      const rotateX = (mouseY / bounds.height - 0.5) * 20;
+      const rotateY = (mouseX / bounds.width - 0.5) * 20;
+
+      artwork.style.transform = `
+        perspective(1000px)
+        rotateX(${-rotateX}deg)
+        rotateY(${rotateY}deg)
+        scale(1.1)
+      `;
+    });
+
+    artwork.addEventListener('mouseleave', () => {
+      artwork.style.transform = 'none';
+    });
+
+    // Progress bar hover effects to show time indicator
+    const progressContainer = document.querySelector('.progress-container');
+    progressContainer.addEventListener('mousemove', (e) => {
+      const bounds = progressContainer.getBoundingClientRect();
+      const percent = (e.clientX - bounds.left) / bounds.width * 100;
+
+      // Create or update hover indicator
+      let hoverIndicator = progressContainer.querySelector('.hover-indicator');
+      if (!hoverIndicator) {
+        hoverIndicator = document.createElement('div');
+        hoverIndicator.className = 'hover-indicator';
+        progressContainer.appendChild(hoverIndicator);
+      }
+
+      hoverIndicator.style.left = `${percent}%`;
+
+      // Show time at hover position
+      if (audio.duration) {
+        const timeAtPosition = (percent / 100) * audio.duration;
+        hoverIndicator.setAttribute('data-time', formatTime(timeAtPosition));
+      }
+    });
+
+    progressContainer.addEventListener('mouseleave', () => {
+      const hoverIndicator = progressContainer.querySelector('.hover-indicator');
+      if (hoverIndicator) {
+        hoverIndicator.remove();
+      }
+    });
+
+    // Ripple effect on play button click
+    playButton.addEventListener('click', (e) => {
+      const bounds = playButton.getBoundingClientRect();
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.left = `${e.clientX - bounds.left}px`;
+      ripple.style.top = `${e.clientY - bounds.top}px`;
+      playButton.appendChild(ripple);
+
+      setTimeout(() => ripple.remove(), 1000);
+    });
+
+    // Message handling from parent window for player control
+    window.addEventListener('message', (event) => {
+      try {
+        if (!event.data || typeof event.data !== 'object') return;
+
+        switch (event.data.type) {
+          case 'togglePlay':
+            if (audio.paused) {
+              audio.play().catch(err => console.error('Play failed:', err));
+            } else {
+              audio.pause();
+            }
+            break;
+
+          case 'seekTo':
+            if (audio.duration && typeof event.data.time === 'number') {
+              audio.currentTime = Math.min(Math.max(0, event.data.time), audio.duration);
+            }
+            break;
+
+          case 'setVolume':
+            if (typeof event.data.volume === 'number') {
+              audio.volume = Math.min(Math.max(0, event.data.volume), 1);
+            }
+            break;
+
+          case 'getState':
+            window.parent.postMessage({
+              type: 'playerState',
+              state: {
+                currentTime: audio.currentTime,
+                duration: audio.duration,
+                paused: audio.paused,
+                volume: audio.volume
+              }
+            }, '*');
+            break;
+        }
+      } catch (err) {
+        console.error('Message handling error:', err);
+      }
+    });
+
+    // Audio error handling
+    audio.addEventListener('error', (e) => {
+      console.error('Audio error:', e);
+      // Indicate error state in UI
+      embedPlayer.classList.add('has-error');
+      playButton.disabled = true;
+      timeDisplay.textContent = 'Error';
+    });
+
+    // Handle visibility change for animation control (performance)
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        embedPlayer.classList.add('reduced-motion');
+      } else {
+        embedPlayer.classList.remove('reduced-motion');
+      }
+    });
+
+    // Initialize player state and event listeners
+    function initPlayer() {
+      // Set initial time display
+      if (audio.duration) {
+        timeDisplay.textContent = '0:00';
+      }
+
+      // Touch event handling for mobile devices
+      if ('ontouchstart' in window) {
+        embedPlayer.classList.add('touch-device');
+
+        // Simplified touch seek on progress bar
+        progressContainer.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          const touch = e.touches[0];
+          const bounds = progressContainer.getBoundingClientRect();
+          const percent = (touch.clientX - bounds.left) / bounds.width;
+          if (audio.duration) {
+            audio.currentTime = audio.duration * percent;
+          }
+        });
+      }
+    }
+
+    // Initialize player when document is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPlayer);
+    } else {
+      initPlayer();
+    }
+
+    // Performance optimization: Preload hover styles using requestIdleCallback
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        // Inject hover styles to improve responsiveness on hover
+        const style = document.createElement('style');
+        style.textContent = `
+          .play-button:hover { transform: scale(1.1); }
+          .progress-container:hover { height: 6px; }
+          .artwork img:hover { transform: scale(1.1); }
+        `;
+        document.head.appendChild(style);
+      });
+    }
+  </script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>: Declares the document type as HTML5.
+
+<html lang="en">: The root element of the HTML page, specifying the language as English.
+
+<head> Section: Contains meta-information about the HTML document, which is not displayed directly on the page.
+
+<meta charset="UTF-8">: Specifies the character encoding for the document as UTF-8, which supports a wide range of characters.
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">: Configures the viewport for responsive design.
+
+width=device-width: Sets the width of the viewport to the device width.
+
+initial-scale=1.0: Sets the initial zoom level to 1.
+
+<title>{{ song.title }} - Sangeet Embed</title>: Sets the title that appears in the browser tab or window title bar. It dynamically includes the song title.
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">: Links to Google's Material Icons stylesheet, allowing the use of Material Design icons.
+
+<style> ... </style>: Contains the CSS styles that define the visual presentation of the player. (Explained in detail in the CSS Styles Section below)
+
+<body> Section: Contains the visible content of the HTML document, which is the music player itself.
+
+<div class="embed-player">: The main container for the entire embed player. This div will hold all the player elements and apply the overall styling.
+
+<div class="player-content">: A container for the artwork, song information, and playback controls. This helps in structuring the content within the player.
+
+<div class="artwork">: Container for the song's artwork/thumbnail image.
+
+<img src="{{ song.thumbnail }}" alt="{{ song.title }}">: The image element to display the song's thumbnail. src attribute dynamically sets the image source, and alt provides alternative text for accessibility.
+
+<div class="info">: Container for song title, artist, and playback controls.
+
+<div class="title">{{ song.title }}</div>: Displays the title of the song.
+
+<div class="artist">{{ song.artist }}</div>: Displays the artist of the song.
+
+<div class="controls">: Container for the playback controls (play button, progress bar, time display).
+
+<button class="play-button" id="playButton">: The button to control play/pause.
+
+<span class="material-icons" style="font-size: 1.2em">{{ "pause" if autoplay else "play_arrow" }}</span>: Uses a Material Icon to display either a "play_arrow" icon (if not autoplaying) or a "pause" icon (if autoplaying). The icon is dynamically chosen based on the autoplay condition.
+
+<div class="progress-container">: Container for the progress bar and wave animation.
+
+<div class="progress-bar" id="progressBar">: The actual progress bar that visually represents the playback progress.
+
+<div class="wave-animation">: A decorative wave animation that appears under the progress bar when the music is playing.
+
+<div class="time" id="timeDisplay">0:00</div>: Displays the current playback time in MM:SS format.
+
+<div class="branding">: Section for branding and a link back to the "Sangeet" website.
+
+<a href="{{ host_url }}/play/{{ song.id }}" target="_blank">: A link that opens in a new tab (target="_blank") and directs to the song's page on the "Sangeet" website.
+
+Listen on Sangeet: Text for the link.
+
+<span class="premium-badge">Premium</span>: A badge indicating a premium feature or link.
+
+<audio id="audioElement" preload="auto" {{ "autoplay" if autoplay else "" }}>: The HTML5 audio element, which is hidden visually but used to play the audio.
+
+id="audioElement": A unique identifier for the audio element, used by JavaScript to control it.
+
+preload="auto": Instructs the browser to preload the audio file, improving playback start time.
+
+{{ "autoplay" if autoplay else "" }}: Dynamically adds the autoplay attribute if the autoplay condition is true, making the music start automatically.
+
+<source src="{{ stream_url }}" type="audio/flac">: Specifies the audio source file.
+
+src="{{ stream_url }}": Dynamically sets the source URL of the audio stream.
+
+type="audio/flac": Indicates the MIME type of the audio file as FLAC (Free Lossless Audio Codec).
+
+<script> ... </script> Section: Contains the JavaScript code that adds interactivity to the player. (Explained in detail in the JavaScript Functionality Section below)
+
+2. CSS Styles (<style> ... </style>)
+
+This section defines the styles that control the visual appearance of the music player. It's well-structured using CSS variables and comments to organize different style sections.
+
+Theme Variables (:root):
+
+The CSS starts by defining custom CSS variables within the :root pseudo-class. These variables are used to control the color scheme of the player and are dynamically set based on the theme variable (purple, blue, dark, or default).
+
+Each theme defines:
+
+--bg-gradient: Background gradient.
+
+--accent-color: Accent color for highlights.
+
+--surface-color: Color for surface elements.
+
+--glow-color: Color for glow effects and shadows.
+
+--artwork-shadow: Shadow for the artwork.
+
+--button-gradient: Gradient for buttons and progress bar.
+
+Reset and Box-sizing (*):
+
+* { margin: 0; padding: 0; box-sizing: border-box; }: Resets default margins and paddings for all elements and sets box-sizing: border-box to include padding and border in the element's total width and height, making layout easier.
+
+Keyframe Animations (@keyframes):
+
+Defines several animations used throughout the player:
+
+gradientMove: Animates the background gradient to create a subtle movement effect.
+
+pulseGlow: Creates a pulsing glow effect used for the player's background.
+
+floatArtwork: Makes the artwork subtly float up and down.
+
+shimmer: Creates a shimmering effect on the progress bar.
+
+waveMove: Animates a wave effect under the progress bar when playing.
+
+Body Styles (body):
+
+font-family: Sets the default font for the body.
+
+background: Applies the background gradient using the --bg-gradient variable.
+
+background-size and animation: Sets up the animated background gradient using the gradientMove animation.
+
+color: Sets the default text color to white.
+
+height: 100vh: Makes the body take up the full viewport height.
+
+display: flex, align-items: center, justify-content: center: Centers the player vertically and horizontally on the page using Flexbox.
+
+overflow: hidden: Prevents scrollbars from appearing if the content exceeds the viewport.
+
+Embed Player Container Styles (.embed-player):
+
+width: 100%: Makes the player container take full width of its parent.
+
+padding: 1.5rem: Adds padding around the player content.
+
+position: relative: Sets positioning context for pseudo-elements and absolute positioning within the player.
+
+backdrop-filter: blur(10px): Applies a blur effect to the background behind the player, creating a glass-like effect (if supported by the browser).
+
+border: Adds a subtle border to the player.
+
+border-radius: 30px: Rounds the corners of the player container.
+
+clip-path: polygon(...): Creates a custom shape for the player container using a polygon clip path, giving it a unique, slightly distorted rectangular shape.
+
+overflow: hidden: Clips content that overflows the container.
+
+Embed Player Glow Effect (.embed-player::before):
+
+Uses a ::before pseudo-element to create a glowing background effect behind the player.
+
+position: absolute, top: 50%, left: 50%, transform: translate(-50%, -50%): Centers the glow effect behind the player.
+
+width, height, background, border-radius, filter: blur(60px), opacity: 0.15, animation: pulseGlow: Styles the glow effect with an accent color, blur, opacity, and the pulseGlow animation.
+
+z-index: -1: Positions the glow effect behind the player content.
+
+Player Content Layout (.player-content):
+
+display: flex, gap: 1.5rem, align-items: center: Arranges the artwork and info section side-by-side using Flexbox, with a gap between them and vertical alignment.
+
+position: relative, z-index: 1: Ensures player content is above the glow effect.
+
+Artwork Container Styles (.artwork):
+
+width, height: Sets the dimensions of the artwork container, dynamically adjusted based on the size variable.
+
+border-radius: ...: Creates a unique rounded shape for the artwork container.
+
+overflow: hidden: Clips the artwork image to the rounded shape.
+
+flex-shrink: 0: Prevents the artwork from shrinking in a flex layout.
+
+position: relative, box-shadow: var(--artwork-shadow), animation: floatArtwork, transform-origin: center: Adds shadow, floating animation, and sets the transform origin for animations.
+
+Artwork Gradient Overlay (.artwork::after):
+
+Uses a ::after pseudo-element to create a subtle gradient overlay on the artwork, adding a visual highlight.
+
+position: absolute, inset: 0, background: linear-gradient(...), z-index: 1: Creates a gradient overlay that covers the artwork.
+
+Artwork Image Styles (.artwork img):
+
+width: 100%, height: 100%, object-fit: cover: Makes the image fill the artwork container and cover it without distortion.
+
+transition: transform 0.3s ease: Adds a smooth transition effect for scaling on hover.
+
+Artwork Image Hover Effect (.artwork:hover img):
+
+transform: scale(1.1): Scales up the image slightly on hover.
+
+Song Info Container Styles (.info):
+
+flex: 1, min-width: 0: Allows the info section to take up available space in the flex container and prevents overflow issues.
+
+display: flex, flex-direction: column, gap: 0.75rem: Arranges the title, artist, and controls vertically in a column layout with spacing.
+
+Song Title Styles (.title):
+
+font-size, font-weight: 600, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, text-shadow, letter-spacing: Styles the song title with font size (dynamic based on size), bold weight, single-line display, text overflow handling for long titles, text shadow, and letter spacing.
+
+Song Artist Styles (.artist):
+
+font-size, color: rgba(255,255,255,0.8), white-space: nowrap, overflow: hidden, text-overflow: ellipsis, letter-spacing: Styles the artist name similarly to the title but with a smaller font size, slightly transparent white color, and letter spacing.
+
+Controls Container Styles (.controls):
+
+display: flex, align-items: center, gap: 1rem, margin-top: 0.25rem: Arranges controls horizontally using Flexbox, with vertical alignment, spacing, and top margin.
+
+Play Button Styles (.play-button):
+
+width, height: Sets button dimensions (dynamic based on size).
+
+border-radius: ...: Creates a rounded, slightly distorted button shape.
+
+border: none, background: var(--button-gradient), color: white, cursor: pointer, display: flex, align-items: center, justify-content: center, transition, box-shadow: Styles the play button with no border, gradient background, white color, pointer cursor, flex layout to center the icon, transition for effects, and shadow.
+
+Play Button Hover and Active Effects (.play-button:hover, .play-button:active):
+
+transform: scale(1.1), box-shadow: ... (hover): Scales up the button and changes the shadow on hover.
+
+transform: scale(0.95) (active): Scales down the button slightly when active (clicked).
+
+Progress Container Styles (.progress-container):
+
+flex: 1, height: 4px, background: rgba(255,255,255,0.1), border-radius: 10px, overflow: hidden, cursor: pointer, position: relative, transition: height 0.2s ease: Styles the progress bar container to take available space, set height, background, rounded corners, overflow clipping, pointer cursor, relative positioning, and height transition.
+
+Progress Container Hover Effect (.progress-container:hover):
+
+height: 6px: Increases the height of the progress bar on hover for better visual feedback.
+
+Progress Bar Styles (.progress-bar):
+
+width: 0%, height: 100%, background: var(--button-gradient), border-radius: inherit, transition: width 0.1s linear, position: relative, overflow: hidden: Styles the progress bar with initial width 0, full height, gradient background, inherited border-radius, width transition, relative positioning, and overflow clipping.
+
+Progress Bar Shimmer Effect (.progress-bar::after):
+
+Uses ::after pseudo-element to create a shimmering highlight effect on the progress bar.
+
+position: absolute, top: 0, left: 0, right: 0, bottom: 0, background: linear-gradient(...), animation: shimmer: Creates a gradient overlay and applies the shimmer animation.
+
+Time Display Styles (.time):
+
+font-size, color: rgba(255,255,255,0.8), min-width: 45px, text-align: right, font-variant-numeric: tabular-nums, letter-spacing: Styles the time display with font size (dynamic), slightly transparent white color, minimum width, right alignment, tabular numerals for consistent digit width, and letter spacing.
+
+Branding Section Styles (.branding):
+
+margin-top: 1rem, text-align: right, font-size, opacity: 0.9, transition: opacity 0.2s ease: Styles the branding section with top margin, right alignment, font size (dynamic), initial opacity, and opacity transition.
+
+Branding Hover Effect (.branding:hover):
+
+opacity: 1: Increases opacity on hover to make it more prominent.
+
+Branding Link Styles (.branding a):
+
+color: var(--accent-color), text-decoration: none, display: inline-flex, align-items: center, gap: 0.5rem, padding, border-radius: 20px, background: rgba(255,255,255,0.1), backdrop-filter: blur(5px), transition: all 0.2s ease: Styles the branding link with accent color, no text decoration, inline flex layout for icon and text, spacing, padding, rounded corners, translucent background, backdrop blur, and transition for effects.
+
+Branding Link Hover Effect (.branding a:hover):
+
+background: rgba(255,255,255,0.15), transform: translateY(-1px): Changes background and slightly moves up the link on hover.
+
+Premium Badge Styles (.premium-badge):
+
+font-size, background: var(--button-gradient), padding, border-radius: 12px, font-weight: 600, letter-spacing, box-shadow: var(--glow-color): Styles the premium badge with font size (dynamic), gradient background, padding, rounded corners, bold weight, letter spacing, and shadow.
+
+Wave Animation Styles (.wave-animation, .is-playing .wave-animation):
+
+.wave-animation: Styles the wave animation container with absolute positioning at the bottom, height, accent color background, and initial opacity of 0 (hidden).
+
+.is-playing .wave-animation: Styles the wave animation when the player has the is-playing class (added by JavaScript when playing). Sets opacity to 0.5 (visible) and applies the waveMove animation.
+
+3. JavaScript Functionality (<script> ... </script>)
+
+This section contains the JavaScript code that makes the player interactive and functional.
+
+Variable Declarations:
+
+const audio = document.getElementById('audioElement');: Gets a reference to the <audio> element.
+
+const playButton = document.getElementById('playButton');: Gets a reference to the play/pause button.
+
+const progressBar = document.getElementById('progressBar');: Gets a reference to the progress bar element.
+
+const timeDisplay = document.getElementById('timeDisplay');: Gets a reference to the time display element.
+
+const embedPlayer = document.querySelector('.embed-player');: Gets a reference to the main player container.
+
+formatTime(seconds) Function:
+
+Takes the time in seconds as input.
+
+Calculates minutes and seconds.
+
+Formats the time into MM:SS string format, padding seconds with a leading zero if necessary.
+
+Returns the formatted time string.
+
+updateProgress() Function:
+
+This function is called repeatedly using requestAnimationFrame to update the progress bar and time display smoothly during playback.
+
+if (audio.duration): Checks if the audio duration is available (audio metadata loaded).
+
+const percent = (audio.currentTime / audio.duration) * 100;: Calculates the playback progress percentage.
+
+progressBar.style.width =${percent}%;: Sets the width of the progress bar to reflect the progress.
+
+timeDisplay.textContent = formatTime(audio.currentTime);: Updates the time display with the current playback time using the formatTime function.
+
+requestAnimationFrame(updateProgress);: Schedules the updateProgress function to be called again before the next browser repaint, creating a smooth animation loop.
+
+Audio Event Listeners:
+
+audio.addEventListener('play', ...): Listens for the play event on the audio element (when playback starts).
+
+playButton.querySelector('.material-icons').textContent = 'pause';: Changes the play button icon to "pause".
+
+embedPlayer.classList.add('is-playing');: Adds the is-playing class to the player container, which triggers the wave animation in CSS.
+
+requestAnimationFrame(updateProgress);: Starts the updateProgress animation loop.
+
+audio.addEventListener('pause', ...): Listens for the pause event (when playback is paused).
+
+playButton.querySelector('.material-icons').textContent = 'play_arrow';: Changes the play button icon back to "play_arrow".
+
+embedPlayer.classList.remove('is-playing');: Removes the is-playing class, stopping the wave animation.
+
+Play Button Click Listener (playButton.addEventListener('click', ...):
+
+Toggles between play and pause when the play button is clicked.
+
+if (audio.paused): Checks if the audio is currently paused.
+
+audio.play();: If paused, starts playback.
+
+else { audio.pause(); }: If playing, pauses playback.
+
+Progress Container Click Listener (document.querySelector('.progress-container').addEventListener('click', ...):
+
+Handles seeking in the audio when the progress bar container is clicked.
+
+const rect = e.target.getBoundingClientRect();: Gets the bounding rectangle of the clicked progress container.
+
+const percent = (e.clientX - rect.left) / rect.width;: Calculates the click position as a percentage of the progress bar width.
+
+if (audio.duration): Checks if audio duration is available.
+
+audio.currentTime = audio.duration * percent;: Sets the currentTime of the audio to the clicked position, effectively seeking to that point in the track.
+
+Artwork Hover Effects (Mousemove and Mouseleave Listeners on artwork image):
+
+artwork.addEventListener('mousemove', ...): Listens for mouse movement over the artwork image.
+
+Calculates mouse position relative to the artwork bounds.
+
+Calculates rotateX and rotateY values based on mouse position to create a 3D rotation effect.
+
+artwork.style.transform = ...: Applies a perspective, rotateX, rotateY, and scale transform to the artwork image, creating a dynamic 3D tilt effect that follows the mouse.
+
+artwork.addEventListener('mouseleave', ...): Listens for mouse leaving the artwork image.
+
+artwork.style.transform = 'none';: Resets the transform to remove the 3D tilt effect.
+
+Progress Bar Hover Effects (Mousemove and Mouseleave Listeners on progressContainer):
+
+progressContainer.addEventListener('mousemove', ...): Listens for mouse movement over the progress container.
+
+Calculates mouse position as a percentage of the progress bar width.
+
+Creates or updates a hoverIndicator div (if it doesn't exist) to visually indicate the hover position on the progress bar.
+
+Sets the left style of the hoverIndicator to position it at the mouse hover percentage.
+
+Calculates the time at the hover position and sets it as a data-time attribute on the hoverIndicator (this could be used for a tooltip, although no tooltip is explicitly implemented in this code).
+
+progressContainer.addEventListener('mouseleave', ...): Listens for mouse leaving the progress container.
+
+Removes the hoverIndicator div if it exists, cleaning up the UI.
+
+Play Button Ripple Effect (Click Listener on playButton):
+
+playButton.addEventListener('click', ...): Listens for clicks on the play button.
+
+Creates a ripple div element dynamically.
+
+Positions the ripple div at the click coordinates within the play button.
+
+Appends the ripple div to the play button element.
+
+setTimeout(() => ripple.remove(), 1000);: Removes the ripple div after 1 second, creating a short-lived ripple effect.
+
+Message Handling from Parent Window (window.addEventListener('message', ...):
+
+Enables communication with a parent window (e.g., if the player is embedded in an iframe).
+
+Listens for message events from the parent window.
+
+try...catch: Wraps the message handling in a try...catch block to handle potential errors gracefully.
+
+if (!event.data || typeof event.data !== 'object') return;: Checks if the received message has data and is an object.
+
+switch (event.data.type): Handles different message types based on the type property of the received data:
+
+'togglePlay': Toggles play/pause.
+
+'seekTo': Seeks to a specific time (if event.data.time is provided and valid).
+
+'setVolume': Sets the volume (if event.data.volume is provided and valid).
+
+'getState': Sends the current player state (currentTime, duration, paused, volume) back to the parent window using window.parent.postMessage.
+
+Audio Error Handling (audio.addEventListener('error', ...):
+
+Listens for the error event on the audio element (if there's an error loading or playing the audio).
+
+console.error('Audio error:', e);: Logs the error to the console.
+
+embedPlayer.classList.add('has-error');: Adds the has-error class to the player container (you would likely have CSS styles to visually indicate an error state when this class is present).
+
+playButton.disabled = true;: Disables the play button to prevent further playback attempts.
+
+timeDisplay.textContent = 'Error';: Updates the time display to show "Error".
+
+Visibility Change Handling (document.addEventListener('visibilitychange', ...):
+
+Listens for the visibilitychange event on the document (when the page becomes hidden or visible, e.g., when switching browser tabs).
+
+if (document.hidden): Checks if the page is hidden.
+
+embedPlayer.classList.add('reduced-motion');: Adds the reduced-motion class to the player container (you could use CSS to reduce or disable animations when the page is hidden to improve performance and battery life).
+
+else { embedPlayer.classList.remove('reduced-motion'); }: When the page becomes visible again, removes the reduced-motion class, re-enabling animations.
+
+initPlayer() Function:
+
+This function is called to initialize the player state and event handling when the document is ready.
+
+if (audio.duration) { timeDisplay.textContent = '0:00'; }: Sets initial time display to "0:00" if audio duration is available.
+
+Touch Event Handling:
+
+if ('ontouchstart' in window): Checks if the device supports touch events (mobile devices).
+
+embedPlayer.classList.add('touch-device');: Adds the touch-device class to the player container (you could use CSS to adjust styles for touch devices).
+
+Simplified Touch Seek on Progress Bar (progressContainer.addEventListener('touchstart', ...): Adds a touchstart event listener for touch devices.
+
+e.preventDefault();: Prevents default touch behavior.
+
+Calculates touch position on the progress bar and seeks to that position, similar to the mouse click seeking.
+
+Initialization Code:
+
+if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initPlayer); } else { initPlayer(); }: Calls initPlayer() either when the DOMContentLoaded event fires (if the document is still loading) or immediately if the document is already loaded. This ensures that the initialization happens at the right time.
+
+Performance Optimization with requestIdleCallback:
+
+if ('requestIdleCallback' in window): Checks if requestIdleCallback is supported by the browser (a performance optimization feature).
+
+requestIdleCallback(() => { ... });: Schedules the code inside the callback to be executed during browser idle time.
+
+Preloading Hover Styles: Creates a <style> element and injects CSS styles for :hover states of the play button, progress container, and artwork image. This is a performance optimization to pre-render these hover styles, making hover interactions feel more responsive because the styles are already parsed and ready to be applied when the user hovers.
+ -->

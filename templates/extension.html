@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install Sangeet Premium Extension</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/design/embed" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Install Sangeet Premium</h1>
+            <p>Follow these simple steps to install and start using Sangeet Premium extension</p>
+            <a href="/download/extension" class="btn-load">
+                <i class="material-icons">download</i>
+                Download Extension
+            </a>
+        </header>
+
+        <div class="steps">
+            <!-- Step 1: Download -->
+            <div class="step-card" data-step="1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2>Download Extension Package</h2>
+                </div>
+                <div class="step-content">
+                    <div class="step-text">
+                        <h3>Get the Extension Files</h3>
+                        <p>Click the download button above to get the Sangeet Premium extension package (.zip file)</p>
+                    </div>
+                    <div class="illustration-container">
+                        <div class="browser-window">
+                            <div class="browser-toolbar">
+                                <div class="window-controls">
+                                    <div class="window-button close"></div>
+                                    <div class="window-button minimize"></div>
+                                    <div class="window-button maximize"></div>
+                                </div>
+                            </div>
+                            <div class="download-section">
+                                <div class="download-card">
+                                    <i class="material-icons">downloading</i>
+                                    <span>sangeet-premium.zip</span>
+                                </div>
+                                <div class="guide-arrow"></div>
+                                <div class="tooltip">Click to download</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Continuing inside the .steps container -->
+
+            <!-- Step 2: Extract -->
+            <div class="step-card" data-step="2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2>Extract Files</h2>
+                </div>
+                <div class="step-content">
+                    <div class="step-text">
+                        <h3>Extract the Extension Files</h3>
+                        <p>Extract the downloaded zip file to a location you can easily find</p>
+                    </div>
+                    <div class="illustration-container">
+                        <div class="browser-window">
+                            <div class="browser-toolbar">
+                                <div class="window-controls">
+                                    <div class="window-button close"></div>
+                                    <div class="window-button minimize"></div>
+                                    <div class="window-button maximize"></div>
+                                </div>
+                                <span class="path-text">Downloads > sangeet-premium</span>
+                            </div>
+                            <div class="folder-structure">
+                                <div class="folder-item">
+                                    <i class="material-icons">folder_open</i>
+                                    <span>sangeet-premium</span>
+                                </div>
+                                <div class="folder-item sub-item">
+                                    <i class="material-icons">description</i>
+                                    <span>manifest.json</span>
+                                </div>
+                                <div class="folder-item sub-item">
+                                    <i class="material-icons">javascript</i>
+                                    <span>background.js</span>
+                                </div>
+                                <div class="folder-item sub-item">
+                                    <i class="material-icons">javascript</i>
+                                    <span>content.js</span>
+                                </div>
+                                <div class="folder-item sub-item">
+                                    <i class="material-icons">image</i>
+                                    <span>icon.png</span>
+                                </div>
+                            </div>
+                            <div class="guide-arrow" style="bottom: 20px; right: 20px;"></div>
+                            <div class="tooltip">Required extension files</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Developer Mode -->
+            <div class="step-card" data-step="3">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2>Enable Developer Mode</h2>
+                </div>
+                <div class="step-content">
+                    <div class="step-text">
+                        <h3>Turn on Developer Mode</h3>
+                        <p>Open your browser's extension page and enable Developer Mode</p>
+                        <ul class="browser-steps">
+                            <li>Open Chrome/Edge browser</li>
+                            <li>Go to Extensions page (⋮ > More tools > Extensions)</li>
+                            <li>Enable Developer Mode using the toggle</li>
+                        </ul>
+                    </div>
+                    <div class="illustration-container">
+                        <div class="browser-window extension-page">
+                            <div class="browser-toolbar">
+                                <div class="window-controls">
+                                    <div class="window-button close"></div>
+                                    <div class="window-button minimize"></div>
+                                    <div class="window-button maximize"></div>
+                                </div>
+                                <span class="page-title">Extensions</span>
+                            </div>
+                            <div class="extension-header">
+                                <div class="search-bar">
+                                    <i class="material-icons search-icon">search</i>
+                                    <input type="text" class="search-input" placeholder="Search extensions">
+                                </div>
+                            </div>
+                            <div class="developer-mode">
+                                <span>Developer mode</span>
+                                <div class="toggle-switch" id="developerToggle"></div>
+                            </div>
+                            <div class="guide-arrow" style="top: 120px; right: 30px;"></div>
+                            <div class="tooltip">Enable Developer Mode here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Load Extension -->
+            <div class="step-card" data-step="4">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <h2>Load Extension</h2>
+                </div>
+                <div class="step-content">
+                    <div class="step-text">
+                        <h3>Load the Unpacked Extension</h3>
+                        <p>Click "Load unpacked" and select the extracted extension folder</p>
+                    </div>
+                    <div class="illustration-container">
+                        <div class="browser-window">
+                            <div class="browser-toolbar">
+                                <div class="window-controls">
+                                    <div class="window-button close"></div>
+                                    <div class="window-button minimize"></div>
+                                    <div class="window-button maximize"></div>
+                                </div>
+                            </div>
+                            <div class="action-bar">
+                                <button class="btn-load" id="loadUnpacked">
+                                    <i class="material-icons">folder_open</i>
+                                    Load unpacked
+                                </button>
+                                <button class="btn-load">
+                                    <i class="material-icons">extension</i>
+                                    Pack extension
+                                </button>
+                                <button class="btn-load">
+                                    <i class="material-icons">refresh</i>
+                                    Update
+                                </button>
+                            </div>
+                            <div class="guide-arrow" style="top: 70px; left: 30px;"></div>
+                            <div class="tooltip">Click Load unpacked</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Verify -->
+            <div class="step-card" data-step="5">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <h2>Verify Installation</h2>
+                </div>
+                <div class="step-content">
+                    <div class="step-text">
+                        <h3>Confirm Installation</h3>
+                        <p>Ensure Sangeet Premium appears in your extensions list and is enabled</p>
+                    </div>
+                    <div class="illustration-container">
+                        <div class="browser-window">
+                            <div class="extension-card">
+                                <div class="extension-icon">
+                                    <i class="material-icons">music_note</i>
+                                </div>
+                                <div class="extension-details">
+                                    <div class="extension-name">Sangeet Premium</div>
+                                    <div class="extension-version">Version 1.0</div>
+                                    <div class="extension-id">ID: monpohpfegkcofgofjjackdmfhbboceh</div>
+                                </div>
+                                <div class="extension-toggle active"></div>
+                                <div class="success-indicator">
+                                    <i class="material-icons">check_circle</i>
+                                </div>
+                            </div>
+                            <div class="guide-arrow" style="bottom: 20px; right: 20px;"></div>
+                            <div class="tooltip">Extension successfully installed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Step card animations
+            const stepCards = document.querySelectorAll('.step-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        animateStep(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            stepCards.forEach(card => observer.observe(card));
+
+            // Step-specific animations
+            function animateStep(stepCard) {
+                const stepNumber = stepCard.dataset.step;
+                const illustration = stepCard.querySelector('.illustration-container');
+
+                switch (stepNumber) {
+                    case '1':
+                        animateDownload(illustration);
+                        break;
+                    case '2':
+                        animateExtract(illustration);
+                        break;
+                    case '3':
+                        animateDeveloperMode(illustration);
+                        break;
+                    case '4':
+                        animateLoadUnpacked(illustration);
+                        break;
+                    case '5':
+                        animateVerification(illustration);
+                        break;
+                }
+            }
+
+            // Developer mode toggle
+            const developerToggle = document.getElementById('developerToggle');
+            if (developerToggle) {
+                developerToggle.addEventListener('click', function () {
+                    this.classList.toggle('active');
+                });
+            }
+
+            // Tooltip visibility
+            document.querySelectorAll('.illustration-container').forEach(container => {
+                const tooltip = container.querySelector('.tooltip');
+                container.addEventListener('mouseenter', () => {
+                    tooltip.style.opacity = '1';
+                });
+                container.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                });
+            });
+
+            // Animation functions
+            function animateDownload(container) {
+                const downloadCard = container.querySelector('.download-card');
+                if (downloadCard) {
+                    downloadCard.classList.add('downloading');
+                }
+            }
+
+            function animateExtract(container) {
+                container.querySelectorAll('.folder-item').forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('show');
+                    }, index * 200);
+                });
+            }
+
+            function animateDeveloperMode(container) {
+                const toggle = container.querySelector('.toggle-switch');
+                if (toggle) {
+                    setTimeout(() => {
+                        toggle.classList.add('active');
+                    }, 500);
+                }
+            }
+
+            function animateLoadUnpacked(container) {
+                const loadButton = container.querySelector('.btn-load');
+                if (loadButton) {
+                    loadButton.classList.add('pulse');
+                }
+            }
+
+            function animateVerification(container) {
+                const successIndicator = container.querySelector('.success-indicator');
+                if (successIndicator) {
+                    successIndicator.classList.add('show');
+                }
+            }
+        });
+        async function setFavicons() {
+            const response = await fetch('/data/download/icons/get-extension');
+            const data = await response.json();
+            const base64Data = data.base64;
+
+            const sizes = [16, 32, 48, 64, 128, 256];
+            sizes.forEach(size => {
+                const link = document.createElement('link');
+                link.rel = 'icon';
+                link.type = 'image/png';
+                link.sizes = `${size}x${size}`;
+                link.href = `data:image/png;base64,${base64Data}`;
+                document.head.appendChild(link);
+            });
+        }
+
+        // Call the function to set favicons
+        setFavicons();
+    </script>
+</body>
+
+</html>

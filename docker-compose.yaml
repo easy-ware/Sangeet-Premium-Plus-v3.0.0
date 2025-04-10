@@ -1,0 +1,25 @@
+services:
+  redis:
+    image: redis
+    ports:
+      - "80:80"  # Expose Sangeet's port 80 to the host
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis:/data  # Persist Redis data to ./redis on the host
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  sangeet:
+    build: .
+    network_mode: service:redis  # Share Redis's network namespace
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./config:/sangeet/config
+      - ./database_files:/sangeet/database_files
+      - ./music:/sangeet/music
+      - ./templates:/sangeet/templates

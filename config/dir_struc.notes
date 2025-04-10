@@ -1,0 +1,22 @@
+{
+    "directories": [
+        {"name": "cloudflare_driver_latest"},
+        {"name": "assets", "subdirs": ["sangeet_logo"]},
+        {"name": "data"},
+        {"name": "database_files"},
+        {"name": "extension"},
+        {"name": "locals"},
+        {"name": "logs"},
+        {"name": "music"},
+        {"name": "tests"},
+        {"name": "payloads"},
+        {"name": "res"},
+        {"name": "sangeet_premium"},
+        {"name": "static"},
+        {"name": "templates"},
+        {"name": "requirements"},
+        {"name": "config"}
+    ]
+}
+
+Like this you can make structures

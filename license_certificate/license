@@ -1,0 +1,43 @@
+# 🎵 Sangeet Premium License 🎵
+
+## Version 1.2.0, February 28, 2025
+
+### 📝 Terms and Conditions
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of "Sangeet Premium" software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, and/or sublicense copies of the Software, subject to the following conditions:
+
+1. ⚠️ **Educational & Personal Use Only**: This Software is developed strictly for educational purposes, technical exploration, and personal enjoyment. It is not intended for commercial use, enterprise applications, or subscription-based models.
+
+2. 🔄 **Attribution**: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+3. 🎧 **Content Disclaimer**: The Software facilitates access to audio content through publicly available APIs and open-source libraries (including but not limited to yt-dlp). Users are solely responsible for ensuring their usage complies with applicable copyright laws and regulations in their jurisdiction.
+
+4. ❌ **Prohibited Activities**: Users are expressly prohibited from:
+   - Selling or redistributing any audio content accessed through the Software
+   - Claiming ownership of any audio content accessed through the Software
+   - Using the Software for any illegal purposes
+
+5. 🛡️ **Liability Waiver**: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+6. 🌐 **Service Verification**: Users must verify the authenticity of any instance of the Software they access. The official version is maintained at github.com/easy-ware/sangeet-premium.
+
+7. 🔍 **No Affiliation**: This Software is not affiliated with or endorsed by any music service, content provider, or platform whose content may be accessible through this service.
+
+8. 📢 **Modifications**: Any modifications to this Software must maintain these license terms and clearly indicate if they are not the official version.
+
+### 🎼 Open Source Components
+
+Sangeet Premium proudly uses these open source components:
+- Python
+- yt-dlp
+- [Other libraries as used in the project]
+
+Each component is subject to its own license terms.
+
+### 📧 Contact
+
+For questions about this license, please open an issue on our GitHub repository.
+
+---
+
+Copyright © 2025 Sangeet Premium Contributors

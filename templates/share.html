@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Shared via Sangeet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href = "/design/share" rel = "stylesheet">
+</head>
+<body>
+    <a href="/" class="logo">
+        <span class="material-icons-round">music_note</span>Sangeet
+    </a>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="material-icons-round" id="themeIcon">light_mode</span>
+    </button>
+
+    <div class="container">
+        <div class="player-card" id="playerCard">
+            <div class="song-thumbnail-container">
+                <div class="song-thumbnail-wrapper">
+                    <div class="skeleton skeleton-thumbnail" id="thumbnailSkeleton"></div>
+                    <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail" id="songThumbnail">
+                </div>
+                <div class="audio-wave" id="audioWave">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            </div>
+
+            <div class="song-info">
+                <div class="skeleton skeleton-text" id="artistSkeleton"></div>
+                <div class="song-artist" id="artistName" style="display: none;">{{ artist }}</div>
+                <div class="skeleton skeleton-title" id="titleSkeleton"></div>
+                <div class="song-title" id="songTitle" style="display: none;">
+                    <div class="marquee" id="titleMarquee">{{ title }}</div>
+                </div>
+            </div>
+
+            <div class="player-controls">
+                <div class="progress-container">
+                    <div class="progress-time" id="currentTime">0:00</div>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="skeleton" id="bufferSkeleton"></div>
+                        <div class="progress-buffer" id="progressBuffer"></div>
+                        <div class="progress-current" id="progressCurrent"></div>
+                    </div>
+                    <div class="progress-time" id="duration">0:00</div>
+                </div>
+
+                <div class="buttons-container">
+                    <button class="control-button play-pause" id="playPauseButton" aria-label="Play or pause">
+                        <span class="material-icons-round" id="playPauseIcon">play_arrow</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="lyrics-container" id="lyricsContainer">
+            <div class="lyrics-header">
+                <div class="lyrics-title">
+                    <span class="material-icons-round">lyrics</span>Lyrics
+                </div>
+            </div>
+            <div class="lyrics-content">
+                <div class="lyrics-skeleton" id="lyricsSkeleton">
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                    <div class="skeleton-line"></div>
+                </div>
+                <div class="lyrics-text" id="lyricsText"></div>
+            </div>
+        </div>
+
+        <button class="sangeet-button" id="openSangeet">
+            <span class="material-icons-round">headphones</span>
+            Play on Sangeet
+        </button>
+    </div>
+
+    <!-- Mini Player and Progress Bar -->
+    <div id="miniPlayer">
+        <span class="material-icons-round" id="miniPlayPauseIcon">play_arrow</span>
+    </div>
+    <div id="miniProgressContainer">
+        <div id="miniProgressCurrent"></div>
+    </div>
+
+    <audio id="audioPlayer" preload="auto" style="display: none;">
+        <source src="{{proxy}}/stream2/open/{{ video_id }}" type="audio/mpeg">
+    </audio>
+
+    <script>
+        (async function() {
+            const elements = {
+                audioPlayer: document.getElementById('audioPlayer'),
+                playPauseButton: document.getElementById('playPauseButton'),
+                playPauseIcon: document.getElementById('playPauseIcon'),
+                progressBar: document.getElementById('progressBar'),
+                progressBuffer: document.getElementById('progressBuffer'),
+                progressCurrent: document.getElementById('progressCurrent'),
+                bufferSkeleton: document.getElementById('bufferSkeleton'),
+                currentTime: document.getElementById('currentTime'),
+                duration: document.getElementById('duration'),
+                titleMarquee: document.getElementById('titleMarquee'),
+                openSangeet: document.getElementById('openSangeet'),
+                themeToggle: document.getElementById('themeToggle'),
+                themeIcon: document.getElementById('themeIcon'),
+                playerCard: document.getElementById('playerCard'),
+                audioWave: document.getElementById('audioWave'),
+                songThumbnail: document.getElementById('songThumbnail'),
+                thumbnailSkeleton: document.getElementById('thumbnailSkeleton'),
+                artistName: document.getElementById('artistName'),
+                artistSkeleton: document.getElementById('artistSkeleton'),
+                songTitle: document.getElementById('songTitle'),
+                titleSkeleton: document.getElementById('titleSkeleton'),
+                lyricsContainer: document.getElementById('lyricsContainer'),
+                lyricsSkeleton: document.getElementById('lyricsSkeleton'),
+                lyricsText: document.getElementById('lyricsText'),
+                miniPlayer: document.getElementById('miniPlayer'),
+                miniPlayPauseIcon: document.getElementById('miniPlayPauseIcon'),
+                miniProgressContainer: document.getElementById('miniProgressContainer'),
+                miniProgressCurrent: document.getElementById('miniProgressCurrent')
+            };
+
+            // Theme handling
+            const setTheme = (isDark) => {
+                document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+                elements.themeIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            };
+
+            const savedTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            setTheme(savedTheme === 'dark');
+
+            elements.themeToggle.addEventListener('click', () => 
+                setTheme(document.documentElement.getAttribute('data-theme') !== 'dark'));
+
+            // Utility functions
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs < 10 ? '0' + secs : secs}`;
+            };
+
+            // Thumbnail loading
+            const loadThumbnail = () => new Promise((resolve) => {
+                if (elements.songThumbnail.complete && elements.songThumbnail.naturalWidth) {
+                    elements.thumbnailSkeleton.style.display = 'none';
+                    elements.songThumbnail.classList.add('loaded');
+                    resolve();
+                } else {
+                    elements.songThumbnail.onload = () => {
+                        elements.thumbnailSkeleton.style.display = 'none';
+                        elements.songThumbnail.classList.add('loaded');
+                        resolve();
+                    };
+                    elements.songThumbnail.onerror = () => {
+                        elements.thumbnailSkeleton.style.display = 'none';
+                        elements.songThumbnail.classList.add('loaded');
+                        resolve();
+                    };
+                }
+            });
+
+            // Content loading
+            const loadContent = async () => {
+                const [lyrics] = await Promise.all([
+                    fetch(`/api/lyrics/{{ video_id }}`).then(res => res.json()).catch(() => []),
+                    loadThumbnail()
+                ]);
+
+                requestAnimationFrame(() => {
+                    elements.artistSkeleton.style.display = 'none';
+                    elements.artistName.style.display = 'block';
+                    elements.titleSkeleton.style.display = 'none';
+                    elements.songTitle.style.display = 'flex';
+                    initMarquee();
+
+                    elements.lyricsSkeleton.style.display = 'none';
+                    elements.lyricsText.innerHTML = lyrics.length 
+                        ? lyrics.map(line => `<p>${line}</p>`).join('')
+                        : '<div class="lyrics-not-found"><p>No lyrics found</p></div>';
+                    elements.lyricsText.style.display = 'block';
+                });
+            };
+
+            // Audio handling
+            const updateProgress = () => {
+                if (!elements.audioPlayer.duration) return;
+                const { currentTime, duration } = elements.audioPlayer;
+                const progressPercent = (currentTime / duration) * 100;
+                elements.progressCurrent.style.width = `${progressPercent}%`;
+                elements.miniProgressCurrent.style.width = `${progressPercent}%`;
+                elements.currentTime.textContent = formatTime(currentTime);
+                elements.duration.textContent = formatTime(duration);
+            };
+
+            const updateBuffer = () => {
+                if (elements.audioPlayer.buffered.length && elements.audioPlayer.duration) {
+                    const bufferedEnd = elements.audioPlayer.buffered.end(0);
+                    elements.progressBuffer.style.width = `${(bufferedEnd / elements.audioPlayer.duration) * 100}%`;
+                    if (bufferedEnd > 0) elements.bufferSkeleton.style.display = 'none';
+                }
+            };
+
+            const updatePlayPauseIcons = () => {
+                const icon = elements.audioPlayer.paused ? 'play_arrow' : 'pause';
+                elements.playPauseIcon.textContent = icon;
+                elements.miniPlayPauseIcon.textContent = icon;
+            };
+
+            const togglePlay = async () => {
+                try {
+                    if (elements.audioPlayer.paused) {
+                        await elements.audioPlayer.play();
+                    } else {
+                        elements.audioPlayer.pause();
+                    }
+                    updatePlayPauseIcons();
+                    if (navigator.mediaSession) {
+                        navigator.mediaSession.playbackState = elements.audioPlayer.paused ? 'paused' : 'playing';
+                    }
+                } catch (error) {
+                    console.error('Playback error:', error);
+                }
+            };
+
+            // Seeking for main progress bar
+            let isSeeking = false;
+            const handleSeek = (e, bar) => {
+                if (!elements.audioPlayer.duration) return;
+                const rect = bar.getBoundingClientRect();
+                const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                elements.audioPlayer.currentTime = pos * elements.audioPlayer.duration;
+                updateProgress();
+            };
+
+            elements.progressBar.addEventListener('mousedown', () => { 
+                isSeeking = true; 
+                elements.bufferSkeleton.style.display = 'block';
+            });
+            document.addEventListener('mouseup', () => { 
+                isSeeking = false; 
+                if (!elements.audioPlayer.paused) elements.bufferSkeleton.style.display = 'none';
+            });
+            document.addEventListener('mousemove', (e) => { if (isSeeking) handleSeek(e, elements.progressBar); });
+            elements.progressBar.addEventListener('click', (e) => handleSeek(e, elements.progressBar));
+
+            elements.progressBar.addEventListener('touchstart', () => { 
+                isSeeking = true; 
+                elements.bufferSkeleton.style.display = 'block';
+            }, { passive: true });
+            elements.progressBar.addEventListener('touchend', () => { 
+                isSeeking = false; 
+                if (!elements.audioPlayer.paused) elements.bufferSkeleton.style.display = 'none';
+            }, { passive: true });
+            elements.progressBar.addEventListener('touchmove', (e) => {
+                if (isSeeking) {
+                    e.preventDefault();
+                    handleSeek({ clientX: e.touches[0].clientX }, elements.progressBar);
+                }
+            }, { passive: false });
+
+            // Marquee
+            const initMarquee = () => {
+                const titleWidth = elements.titleMarquee.offsetWidth;
+                const containerWidth = elements.songTitle.offsetWidth;
+                elements.titleMarquee.classList.toggle('animate', titleWidth > containerWidth);
+            };
+
+            // Mini Player Logic
+            const observer = new IntersectionObserver((entries) => {
+                if (!entries[0].isIntersecting) {
+                    elements.miniPlayer.style.display = 'flex';
+                    if (!localStorage.getItem('miniPlayerTipShown')) {
+                        const tip = document.createElement('div');
+                        tip.id = 'miniPlayerTip';
+                        tip.style.position = 'absolute';
+                        tip.style.bottom = '60px';
+                        tip.style.right = '0';
+                        tip.style.background = 'var(--control-bg)';
+                        tip.style.padding = '5px 10px';
+                        tip.style.borderRadius = '5px';
+                        tip.style.fontSize = '12px';
+                        tip.textContent = 'Click to play/pause, long press to seek';
+                        elements.miniPlayer.appendChild(tip);
+                        setTimeout(() => {
+                            tip.style.display = 'none';
+                            localStorage.setItem('miniPlayerTipShown', 'true');
+                        }, 5000);
+                    }
+                } else {
+                    elements.miniPlayer.style.display = 'none';
+                    elements.miniProgressContainer.style.display = 'none';
+                }
+            }, { threshold: 0 });
+            observer.observe(elements.playerCard);
+
+            let isLongPress = false;
+            let longPressTimer;
+            const longPressDuration = 500;
+
+            elements.miniPlayer.addEventListener('mousedown', () => {
+                longPressTimer = setTimeout(() => {
+                    elements.miniProgressContainer.style.display = 'block';
+                }, longPressDuration);
+            });
+
+            elements.miniPlayer.addEventListener('mouseup', () => {
+                clearTimeout(longPressTimer);
+            });
+
+            elements.miniPlayer.addEventListener('mouseleave', () => {
+                clearTimeout(longPressTimer);
+            });
+
+            elements.miniPlayer.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                isLongPress = false;
+                longPressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    elements.miniProgressContainer.style.display = 'block';
+                }, longPressDuration);
+            }, { passive: false });
+
+            elements.miniPlayer.addEventListener('touchend', () => {
+                clearTimeout(longPressTimer);
+                if (!isLongPress) {
+                    togglePlay();
+                }
+            });
+
+            let isMiniSeeking = false;
+
+            elements.miniProgressContainer.addEventListener('mousedown', () => {
+                isMiniSeeking = true;
+            });
+
+            document.addEventListener('mouseup', () => {
+                isMiniSeeking = false;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isMiniSeeking) {
+                    handleSeek(e, elements.miniProgressContainer);
+                }
+            });
+
+            elements.miniProgressContainer.addEventListener('click', (e) => {
+                handleSeek(e, elements.miniProgressContainer);
+            });
+
+            elements.miniProgressContainer.addEventListener('touchstart', () => {
+                isMiniSeeking = true;
+            }, { passive: true });
+
+            elements.miniProgressContainer.addEventListener('touchend', () => {
+                isMiniSeeking = false;
+            }, { passive: true });
+
+            elements.miniProgressContainer.addEventListener('touchmove', (e) => {
+                if (isMiniSeeking) {
+                    e.preventDefault();
+                    handleSeek({ clientX: e.touches[0].clientX }, elements.miniProgressContainer);
+                }
+            }, { passive: false });
+
+            document.addEventListener('click', (e) => {
+                if (!elements.miniPlayer.contains(e.target) && !elements.miniProgressContainer.contains(e.target)) {
+                    elements.miniProgressContainer.style.display = 'none';
+                }
+            });
+
+            // Space bar control
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    togglePlay();
+                }
+            });
+
+            // Event listeners
+            elements.playPauseButton.addEventListener('click', togglePlay);
+            elements.miniPlayer.addEventListener('click', togglePlay);
+            elements.audioPlayer.addEventListener('timeupdate', updateProgress);
+            elements.audioPlayer.addEventListener('progress', updateBuffer);
+            elements.audioPlayer.addEventListener('loadedmetadata', () => {
+                elements.duration.textContent = formatTime(elements.audioPlayer.duration);
+            });
+            elements.audioPlayer.addEventListener('canplay', () => {
+                elements.bufferSkeleton.style.display = 'none';
+            });
+            elements.audioPlayer.addEventListener('playing', () => {
+                updatePlayPauseIcons();
+                elements.playerCard.classList.add('playing');
+            });
+            elements.audioPlayer.addEventListener('pause', () => {
+                updatePlayPauseIcons();
+                elements.playerCard.classList.remove('playing');
+            });
+            elements.audioPlayer.addEventListener('ended', () => {
+                updatePlayPauseIcons();
+                elements.playerCard.classList.remove('playing');
+            });
+            elements.audioPlayer.addEventListener('waiting', () => {
+                if (!elements.audioPlayer.paused) {
+                    elements.playPauseIcon.textContent = 'hourglass_empty';
+                    elements.miniPlayPauseIcon.textContent = 'hourglass_empty';
+                    elements.bufferSkeleton.style.display = 'block';
+                }
+            });
+            elements.audioPlayer.addEventListener('error', () => {
+                console.error('Audio error:', elements.audioPlayer.error);
+                elements.playPauseIcon.textContent = 'error';
+                elements.miniPlayPauseIcon.textContent = 'error';
+            });
+
+            elements.openSangeet.addEventListener('click', () => {
+                window.location.href = '{{ share_url }}';
+            });
+
+            // Media Session
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: '{{ title }}',
+                    artist: '{{ artist }}',
+                    artwork: [{ src: '{{ thumbnail }}', sizes: '512x512', type: 'image/png' }]
+                });
+                navigator.mediaSession.setActionHandler('play', togglePlay);
+                navigator.mediaSession.setActionHandler('pause', togglePlay);
+            }
+
+            // Initialize
+            elements.audioPlayer.playbackRate = 1.0;
+            window.addEventListener('resize', initMarquee);
+            elements.playerCard.addEventListener('mouseenter', () => {
+                elements.songThumbnail.style.transform = 'scale(1.02)';
+            });
+            elements.playerCard.addEventListener('mouseleave', () => {
+                elements.songThumbnail.style.transform = 'scale(1)';
+            });
+
+            await loadContent();
+        })();
+    </script>
+</body>
+</html>
